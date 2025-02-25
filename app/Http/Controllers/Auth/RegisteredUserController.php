@@ -38,12 +38,13 @@ class RegisteredUserController extends Controller
         ]);
 
         $user = User::create([
-            'name' => $request->name,
-            'email' => $request->email,
+            'name' => strip_tags($request->name), // HTML тегтерді жояды
+            'email' => filter_var($request->email, FILTER_SANITIZE_EMAIL),
             'password' => Hash::make($request->password),
             'role' => 'student',
             'auth_type' => 'system',
         ]);
+
 
         event(new Registered($user));
 

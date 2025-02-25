@@ -2,21 +2,18 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
+use Tymon\JWTAuth\Contracts\JWTSubject;
+use Laravel\Fortify\TwoFactorAuthenticatable;
 
-class User extends Authenticatable
+class User extends Authenticatable implements JWTSubject
 {
-    use HasApiTokens, HasFactory, Notifiable;
+    use HasApiTokens, HasFactory, Notifiable, TwoFactorAuthenticatable;
 
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var array<int, string>
-     */
     protected $fillable = [
         'name',
         'nickname',
@@ -26,22 +23,44 @@ class User extends Authenticatable
         'provider_token',
         'auth_type',
         'role',
+        'two_factor_secret',
+        'two_factor_recovery_codes',
     ];
 
-    /**
-     * The attributes that should be hidden for serialization.
-     *
-     * @var array<int, string>
-     */
     protected $hidden = [
         'password',
         'remember_token',
+        'two_factor_secret',
+        'two_factor_recovery_codes',
     ];
 
-    protected function casts(): array {
-        return [
-            'email_verified_at' => 'datetime',
-            'password' => 'hashed'
-        ];
+    protected $casts = [  // ✅ Дұрыс жазылуы
+        'email_verified_at' => 'datetime',
+        'password' => 'hashed',
+        'two_factor_confirmed_at' => 'datetime',
+    ];
+
+    /**
+     * Аты мен никнеймді XSS-тен қорғайтын мутаторлар
+     */
+    public function setNameAttribute($value)
+    {
+        $this->attributes['name'] = htmlspecialchars(strip_tags($value), ENT_QUOTES, 'UTF-8');
+    }
+
+    public function setNicknameAttribute($value)
+    {
+        $this->attributes['nickname'] = htmlspecialchars(strip_tags($value));
+    }
+
+    // JWT әдістері
+    public function getJWTIdentifier()
+    {
+        return $this->getKey();
+    }
+
+    public function getJWTCustomClaims()
+    {
+        return [];
     }
 }

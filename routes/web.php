@@ -21,6 +21,14 @@ use App\Models\User;
 |
 */
 
+Route::get('/register', function () {
+    return view('auth.register');
+})->name('register');
+Route::get('/login', function () {
+    return view('auth.login');
+})->name('login');
+
+
 Route::middleware('auth')->group(function () {
     Route::get('/', function () { return Inertia::render('Welcome', [ 'courses' => Courses::OrderBy('id', 'DESC')->get() ]); })->name('home');
 
@@ -30,7 +38,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/view-course/{id}', [CoursesController::class, 'show'])->name('course.show');
     Route::get('/watch/{id}', [CoursesController::class, 'watchepisode'])->name('course.watchepisode');
     Route::get('/manage-course', function () { return Inertia::render('ManageCourse', [ 'courses' => Courses::OrderBy('id', 'DESC')->get() ]); })->name('manageCourses');
-    
+
     Route::get('/add-course', function () {return Inertia::render('AddCourse'); })->name('addCourse');
     Route::post('/addcourse', [CoursesController::class, 'store'])->name('course.store');
     Route::delete('/videos/{id}', [CoursesController::class, 'destroy'])->name('course.destroy');

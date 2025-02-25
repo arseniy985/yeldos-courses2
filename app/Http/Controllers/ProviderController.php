@@ -32,7 +32,7 @@ class ProviderController extends Controller
                 'provider_id' => $user->id,
                 'auth_type' => $provider,
             ], [
-                'name' => $user->name,
+                'name' => e($user->name),
                 'nickname' => $user->nickname,
                 'email' => $user->email,
                 'provider_token' => $user->token,
