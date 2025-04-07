@@ -74,6 +74,9 @@ This is an E-Learning System built using Laravel 10, Breeze, Socialite, Vue.js 3
    php artisan migrate
    php artisan db:seed
 
+СДЕЛАТЬ API КЛЮЧ MISTRAL AI (https://console.mistral.ai/api-keys) И ДОБАВИТЬ ЕГО В .env
+MISTRAL_API_KEY={ключ}
+
 9. Start the development server and compile assets:
 
    ```bash
