@@ -14,7 +14,7 @@ class MistralService
         $this->mistralClient = $mistralClient;
     }
 
-    public function query(string $context, string $text)
+    public function query(string $context, string $text, mixed $model = Model::large->value)
     {
         // echo(json_encode([
         //         [
@@ -37,7 +37,7 @@ class MistralService
                     'role' => 'user',
                     'content' => "$text"
                 ]
-            ], model: Model::large->value
+            ], model: $model
         );
         $choices = $res->json();
         return $choices['choices'][0]['message']['content'];
