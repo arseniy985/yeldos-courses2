@@ -2,6 +2,7 @@
 import { Head, Link } from "@inertiajs/vue3";
 import NavLayout from "@/Layouts/NavLayout.vue";
 import CourseCard from "@/Components/CourseCard.vue";
+import CourseChatbot from "@/Components/CourseChatbot.vue";
 
 defineProps({
     courses: Array,
@@ -28,6 +29,9 @@ defineProps({
                 </Link>
             </div>
         </div>
+
+        <!-- Чат-бот для помощи в выборе курсов -->
+<!--        <CourseChatbot />-->
     </NavLayout>
 </template>
 

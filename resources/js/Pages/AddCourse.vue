@@ -79,7 +79,16 @@ const addCourse = () => {
         return episode; // Return the modified episode to keep reactivity
     });
 
-    router.post("/addcourse", data);
+    router.post("/addcourse", data, {
+        onSuccess: (page) => {
+            // Перенаправляем на страницу создания теста для только что созданного курса
+            if (page.props.course && page.props.course.id) {
+                router.visit(route('course.tests.create', { courseId: page.props.course.id }));
+            } else {
+                router.visit(route('manageCourses'));
+            }
+        }
+    });
 };
 
 const handleThumbnailChange = (index, e) => {

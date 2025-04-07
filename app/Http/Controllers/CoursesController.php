@@ -93,16 +93,17 @@ class CoursesController extends Controller
                 }
             }
 
-            return redirect()->route('course.show', $course['id']);
+            return redirect()->route('course.show', $course['id'])->with('course', $course);
         }
     }
 
     public function show($id)
     {   
+        $course = Courses::with('tests')->findOrFail($id);
         return Inertia::render('Course', [
-            'course' => Courses::select('courses.*')
-                ->find($id),
-            'episodes' => DB::table('course_episodes')->where('course_id', $id)->get()
+            'course' => $course,
+            'episodes' => DB::table('course_episodes')->where('course_id', $id)->get(),
+            'tests' => $course->tests
         ]);
     }
 

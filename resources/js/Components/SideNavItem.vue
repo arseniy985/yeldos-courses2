@@ -6,9 +6,8 @@
         <div :class="[!openSideNav ? 'w-full flex justify-center' : '']">
             <component :is="icon" />
         </div>
-        <div :class="[!openSideNav ? '' : 'mt-1 ml-4']">
-            <span v-if="!openSideNav">{{ iconString.substring(0, 4) }}</span>
-            <span v-else>{{ iconString }}</span>
+        <div v-if="openSideNav" class="mt-1 ml-4">
+            <span>{{ iconString }}</span>
         </div>
     </li>
 </template>
@@ -16,12 +15,12 @@
 <script setup>
 import { defineProps, toRefs } from "vue";
 
-import Home from "vue-material-design-icons/Home.vue";
-import ChairSchool from "vue-material-design-icons/ChairSchool.vue";
-import Library from "vue-material-design-icons/Library.vue";
-import AccountSchool from "vue-material-design-icons/AccountSchool.vue";
-import BookPlus from "vue-material-design-icons/BookPlus.vue";
-import BookMultiple from "vue-material-design-icons/BookMultiple.vue";
+import Home from "@/Components/Icons/HomeIcon.vue";
+import SchoolIcon from "@/Components/Icons/SchoolIcon.vue";
+import LibraryIcon from "@/Components/Icons/LibraryIcon.vue";
+import BookPlusIcon from "@/Components/Icons/BookPlusIcon.vue";
+import BookMultipleIcon from "@/Components/Icons/BookMultipleIcon.vue";
+import TestIcon from "@/Components/Icons/TestIcon.vue";
 
 const props = defineProps({
     openSideNav: Boolean,
@@ -33,9 +32,10 @@ const { openSideNav, iconString } = toRefs(props);
 let icon = null;
 
 if (iconString.value === "Home") icon = Home;
-if (iconString.value === "Courses") icon = ChairSchool;
-if (iconString.value === "My Library") icon = Library;
-if (iconString.value === "Manage Students") icon = AccountSchool;
-if (iconString.value === "Create Course") icon = BookPlus;
-if (iconString.value === "Manage Courses") icon = BookMultiple;
+if (iconString.value === "Courses") icon = SchoolIcon;
+if (iconString.value === "My Library") icon = LibraryIcon;
+if (iconString.value === "Manage Students") icon = SchoolIcon;
+if (iconString.value === "Create Course") icon = BookPlusIcon;
+if (iconString.value === "Manage Courses") icon = BookMultipleIcon;
+ if (iconString.value === "Tests") icon = TestIcon;
 </script>

@@ -9,6 +9,7 @@ use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 use Tymon\JWTAuth\Contracts\JWTSubject;
 use Laravel\Fortify\TwoFactorAuthenticatable;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class User extends Authenticatable implements JWTSubject
 {
@@ -62,5 +63,13 @@ class User extends Authenticatable implements JWTSubject
     public function getJWTCustomClaims()
     {
         return [];
+    }
+    
+    /**
+     * Результаты тестов пользователя
+     */
+    public function testResults(): HasMany
+    {
+        return $this->hasMany(TestResult::class);
     }
 }

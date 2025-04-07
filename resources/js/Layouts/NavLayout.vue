@@ -2,8 +2,8 @@
 import { ref, onMounted } from "vue";
 import { usePage, Link } from "@inertiajs/vue3";
 import SideNavItem from "../Components/SideNavItem.vue";
-import MenuIcon from "vue-material-design-icons/Menu.vue";
-import MagnifyIcon from "vue-material-design-icons/Magnify.vue";
+import MenuIcon from "@/Components/Icons/MenuIcon.vue";
+import MagnifyIcon from "@/Components/Icons/MagnifyIcon.vue";
 import Dropdown from "@/Components/Dropdown.vue";
 import DropdownLink from "@/Components/DropdownLink.vue";
 
@@ -32,24 +32,11 @@ const resize = () => {
 };
 
 const isNavOverlay = () => {
-    if (usePage().url === "/") openSideNav.value = !openSideNav.value;
-    if (usePage().url === "/add-course")
+    if (width.value < 640) {
         openSideNavOverlay.value = !openSideNavOverlay.value;
-    if (usePage().url === "/manage-course")
-        openSideNavOverlay.value = !openSideNavOverlay.value;
-    if (usePage().url === "/manage-students")
-        openSideNavOverlay.value = !openSideNavOverlay.value;
-    if (usePage().url === "/profile")
-        openSideNavOverlay.value = !openSideNavOverlay.value;
-    if (width.value < 640) openSideNavOverlay.value = !openSideNavOverlay.value;
-    if (usePage().url !== "/" && width.value < 640)
-        openSideNavOverlay.value = !openSideNavOverlay.value;
-    if (usePage().props.course)
-        openSideNavOverlay.value = !openSideNavOverlay.value;
-    if (usePage().props.episode_details)
-        openSideNavOverlay.value = !openSideNavOverlay.value;
-    if (usePage().props.student)
-        openSideNavOverlay.value = !openSideNavOverlay.value;
+    } else {
+        openSideNav.value = !openSideNav.value;
+    }
 };
 </script>
 
@@ -129,7 +116,6 @@ const isNavOverlay = () => {
 
         <div v-if="width > 639">
             <div
-                v-if="$page.url === '/'"
                 id="SideNav"
                 :class="[!openSideNav ? 'w-[70px]' : 'w-[240px]']"
                 class="h-[100%] fixed z-0 bg-slate-800"
@@ -167,14 +153,12 @@ const isNavOverlay = () => {
                         </Link>
                     </div>
                     <div class="border-b border-slate-700 my-2.5"></div>
-                    <SideNavItem
-                        :openSideNav="openSideNav"
-                        iconString="Courses"
-                    />
-                    <SideNavItem
-                        :openSideNav="openSideNav"
-                        iconString="My Library"
-                    />
+                    <Link :href="route('student.tests')">
+                        <SideNavItem
+                            :openSideNav="openSideNav"
+                            iconString="Tests"
+                        />
+                    </Link>
                 </ul>
             </div>
         </div>
@@ -239,7 +223,15 @@ const isNavOverlay = () => {
                     </Link>
                 </div>
                 <div class="border-b border-slate-600 my-2.5"></div>
-                <SideNavItem :openSideNav="true" iconString="Courses" />
+                <Link :href="route('home')">
+                    <SideNavItem :openSideNav="true" iconString="Courses" />
+                </Link>
+                <Link :href="route('student.tests')">
+                    <SideNavItem
+                        :openSideNav="true"
+                        iconString="Tests"
+                    />
+                </Link>
                 <SideNavItem :openSideNav="true" iconString="My Library" />
             </ul>
         </div>
@@ -250,7 +242,6 @@ const isNavOverlay = () => {
             :class="{
                 'w-[calc(100%-70px)]': !openSideNav,
                 'w-[calc(100%-240px)]': openSideNav,
-                'w-[100vw] xl:w-[calc(100%-80px)]': $page.url !== '/',
                 'w-[100vw]': width < 639,
             }"
         >

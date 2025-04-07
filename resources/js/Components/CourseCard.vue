@@ -66,8 +66,8 @@
 
 <script setup>
 import { defineProps, toRefs, ref, watch, onMounted } from "vue";
-import Star from "vue-material-design-icons/Star.vue";
-import StarHalfFull from "vue-material-design-icons/StarHalfFull.vue";
+import Star from "@/Components/Icons/StarIcon.vue";
+import StarHalfFull from "@/Components/Icons/StarHalfIcon.vue";
 
 const props = defineProps({
     title: String,

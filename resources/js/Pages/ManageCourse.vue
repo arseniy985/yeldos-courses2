@@ -83,6 +83,19 @@ defineProps({ courses: Array });
                                                     <Link
                                                         :href="
                                                             route(
+                                                                'course.tests',
+                                                                {
+                                                                    courseId: course.id,
+                                                                }
+                                                            )
+                                                        "
+                                                        class="text-white py-3 text-sm bg-indigo-600 hover:bg-indigo-800 duration-300 font-bold px-3 rounded cursor-pointer mr-2"
+                                                    >
+                                                        Tests
+                                                    </Link>
+                                                    <Link
+                                                        :href="
+                                                            route(
                                                                 'course.destroy',
                                                                 {
                                                                     id: course.id,

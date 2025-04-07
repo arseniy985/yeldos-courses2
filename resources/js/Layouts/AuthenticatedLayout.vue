@@ -37,6 +37,38 @@ const showingNavigationDropdown = ref(false);
                                 >
                                     Dashboard
                                 </NavLink>
+                                
+                                <!-- Ссылки для администратора -->
+                                <template v-if="$page.props.auth.user.role === 'admin'">
+                                    <NavLink
+                                        :href="route('manageCourses')"
+                                        :active="route().current('manageCourses')"
+                                    >
+                                        Управление курсами
+                                    </NavLink>
+                                    <NavLink
+                                        :href="route('manageStudents')"
+                                        :active="route().current('manageStudents')"
+                                    >
+                                        Управление студентами
+                                    </NavLink>
+                                </template>
+                                
+                                <!-- Ссылки для студентов -->
+                                <template v-if="$page.props.auth.user.role === 'student'">
+                                    <NavLink
+                                        :href="route('student.tests')"
+                                        :active="route().current('student.tests')"
+                                    >
+                                        Тесты
+                                    </NavLink>
+                                    <NavLink
+                                        :href="route('student.test-results')"
+                                        :active="route().current('student.test-results')"
+                                    >
+                                        Результаты тестов
+                                    </NavLink>
+                                </template>
                             </div>
                         </div>
 
@@ -144,6 +176,38 @@ const showingNavigationDropdown = ref(false);
                         >
                             Dashboard
                         </ResponsiveNavLink>
+                        
+                        <!-- Мобильные ссылки для администратора -->
+                        <template v-if="$page.props.auth.user.role === 'admin'">
+                            <ResponsiveNavLink
+                                :href="route('manageCourses')"
+                                :active="route().current('manageCourses')"
+                            >
+                                Управление курсами
+                            </ResponsiveNavLink>
+                            <ResponsiveNavLink
+                                :href="route('manageStudents')"
+                                :active="route().current('manageStudents')"
+                            >
+                                Управление студентами
+                            </ResponsiveNavLink>
+                        </template>
+                        
+                        <!-- Мобильные ссылки для студентов -->
+                        <template v-if="$page.props.auth.user.role === 'student'">
+                            <ResponsiveNavLink
+                                :href="route('student.tests')"
+                                :active="route().current('student.tests')"
+                            >
+                                Тесты
+                            </ResponsiveNavLink>
+                            <ResponsiveNavLink
+                                :href="route('student.test-results')"
+                                :active="route().current('student.test-results')"
+                            >
+                                Результаты тестов
+                            </ResponsiveNavLink>
+                        </template>
                     </div>
 
                     <!-- Responsive Settings Options -->

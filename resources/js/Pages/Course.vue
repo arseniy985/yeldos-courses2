@@ -1,12 +1,13 @@
 <script setup>
 import { Head, Link } from "@inertiajs/vue3";
 import NavLayout from "@/Layouts/NavLayout.vue";
-import Star from "vue-material-design-icons/Star.vue";
-import StarHalfFull from "vue-material-design-icons/StarHalfFull.vue";
+import Star from "@/Components/Icons/StarIcon.vue";
+import StarHalfFull from "@/Components/Icons/StarHalfIcon.vue";
 
 defineProps({
     course: Object,
     episodes: Array,
+    tests: Array,
 });
 
 const trimLongText = (string, length) => {
@@ -123,52 +124,34 @@ const trimLongText = (string, length) => {
                                 </li>
                             </Link>
                         </div>
-
-                        <!-- Code for skeleton -->
-                        <!-- <div
-                            role="status"
-                            class="space-y-8 animate-pulse md:space-y-0 md:space-x-8 md:flex md:items-center w-full"
-                        >
-                            <div
-                                class="flex items-center justify-center w-60 h-48 bg-slate-600 rounded sm:w-96 dark:bg-gray-700"
-                            >
-                                <svg
-                                    class="w-10 h-10 text-gray-200 dark:text-gray-600"
-                                    aria-hidden="true"
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    fill="currentColor"
-                                    viewBox="0 0 16 20"
-                                >
-                                    <path
-                                        d="M5 5V.13a2.96 2.96 0 0 0-1.293.749L.879 3.707A2.98 2.98 0 0 0 .13 5H5Z"
-                                    />
-                                    <path
-                                        d="M14.066 0H7v5a2 2 0 0 1-2 2H0v11a1.97 1.97 0 0 0 1.934 2h12.132A1.97 1.97 0 0 0 16 18V2a1.97 1.97 0 0 0-1.934-2ZM9 13a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-2a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v2Zm4 .382a1 1 0 0 1-1.447.894L10 13v-2l1.553-1.276a1 1 0 0 1 1.447.894v2.764Z"
-                                    />
-                                </svg>
-                            </div>
-                            <div class="w-full">
-                                <div
-                                    class="h-2.5 bg-slate-600 rounded-full dark:bg-gray-700 w-48 mb-4"
-                                ></div>
-                                <div
-                                    class="h-2 bg-slate-600 rounded-full dark:bg-gray-700 max-w-[850px] mb-2.5"
-                                ></div>
-                                <div
-                                    class="h-2 bg-slate-600 rounded-full dark:bg-gray-700 max-w-[750px] mb-2.5"
-                                ></div>
-                                <div
-                                    class="h-2 bg-slate-600 rounded-full dark:bg-gray-700 max-w-[790px] mb-2.5"
-                                ></div>
-                                <div
-                                    class="h-2 bg-slate-600 rounded-full dark:bg-gray-700 max-w-[670px] mb-2.5"
-                                ></div>
-                                <div
-                                    class="h-2 bg-slate-600 rounded-full dark:bg-gray-700 max-w-[840px]"
-                                ></div>
-                            </div>
-                        </div> -->
                     </ul>
+                </div>
+                
+                <!-- Секция с тестами курса -->
+                <div v-if="tests && tests.length > 0" class="md:col-span-3 bg-gray-800 rounded-lg p-6 mt-8">
+                    <div class="flex justify-between items-center mb-6">
+                        <h2 class="text-xl font-semibold text-white">
+                            Тесты для курса
+                        </h2>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        <div v-for="test in tests" :key="test.id" 
+                            class="bg-gray-700 border border-gray-600 rounded-lg shadow-lg hover:shadow-2xl transition p-6">
+                            <h3 class="text-lg font-semibold text-white mb-3">{{ test.title }}</h3>
+                            
+                            <div class="mt-2 text-sm text-gray-300">
+                                Количество вопросов: {{ test.questions_count || 'не указано' }}
+                            </div>
+                            
+                            <div class="mt-4 flex justify-end">
+                                <Link :href="route('student.test.take', { id: test.id })" 
+                                    class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition">
+                                    Пройти тест
+                                </Link>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </main>

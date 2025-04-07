@@ -1,7 +1,7 @@
 <script setup>
 import { Head, Link, usePage } from "@inertiajs/vue3";
 import NavLayout from "@/Layouts/NavLayout.vue";
-import Play from "vue-material-design-icons/Play.vue";
+import Play from "@/Components/Icons/PlayIcon.vue";
 
 defineProps({
     episode_details: Object,
