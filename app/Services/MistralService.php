@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use HelgeSverre\Mistral\Enums\Model;
 use HelgeSverre\Mistral\Mistral;
 
 class MistralService
@@ -25,6 +26,7 @@ class MistralService
         //             'content' => "$text"]]
         //         ));
         // exit();
+
         $res = $this->mistralClient->chat()->create(
             messages: [
                 [
@@ -35,7 +37,7 @@ class MistralService
                     'role' => 'user',
                     'content' => "$text"
                 ]
-            ]
+            ], model: Model::large->value
         );
         $choices = $res->json();
         return $choices['choices'][0]['message']['content'];
