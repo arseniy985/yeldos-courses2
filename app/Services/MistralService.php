@@ -5,7 +5,7 @@ namespace App\Services;
 use HelgeSverre\Mistral\Enums\Model;
 use HelgeSverre\Mistral\Mistral;
 
-class MistralService
+class MistralService implements AIServiceInterface
 {
     private Mistral $mistralClient;
 
@@ -14,7 +14,7 @@ class MistralService
         $this->mistralClient = $mistralClient;
     }
 
-    public function query(string $context, string $text, mixed $model = Model::large->value)
+    public function query(string $context, string $text, mixed $model = Model::large->value): string
     {
         // echo(json_encode([
         //         [

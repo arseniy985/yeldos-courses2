@@ -31,7 +31,7 @@ defineProps({
         </div>
 
         <!-- Чат-бот для помощи в выборе курсов -->
-<!--        <CourseChatbot />-->
+        <CourseChatbot />
     </NavLayout>
 </template>
 

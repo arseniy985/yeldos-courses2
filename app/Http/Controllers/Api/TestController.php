@@ -3,8 +3,7 @@
 namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
-use App\Services\MistralService;
-use HelgeSverre\Mistral\Enums\Model;
+use App\Services\AIServiceInterface;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\TestResult;
@@ -13,7 +12,7 @@ use Illuminate\Http\JsonResponse;
 
 class TestController extends Controller
 {
-    private MistralService $mistralService;
+    private AIServiceInterface $aiService;
 
     private static string $analysis = <<<PROMPT
         Ты — опытный преподаватель. Проанализируй результаты теста и дай подробный персонализированный анализ.
@@ -62,9 +61,9 @@ class TestController extends Controller
 
 
 
-    public function __construct(MistralService $mistralService)
+    public function __construct(AIServiceInterface $aiService)
     {
-        $this->mistralService = $mistralService;
+        $this->aiService = $aiService;
     }
 
     public function getResultAnalytics(Request $request)
@@ -91,9 +90,8 @@ class TestController extends Controller
             $testResult->answersData = $answers;
         }
 
-        // Используем MistralService для получения аналитики
-        // с использованием подготовленного промпта
-        $analysis = $this->mistralService->query(self::$analysis, json_encode($testResult), Model::medium->value);
+        // Используем AIService для получения аналитики с использованием подготовленного промпта
+        $analysis = $this->aiService->query(self::$analysis, json_encode($testResult));
 
         return response()->json($analysis);
     }
@@ -242,8 +240,8 @@ class TestController extends Controller
         // Формируем промпт для чат-бота
         $chatPrompt = $this->generateChatPrompt($testResult, $userQuestion);
 
-        // Используем MistralService для получения ответа на вопрос
-        $response = $this->mistralService->query($chatPrompt, json_encode($testResult));
+        // Используем AIService для получения ответа на вопрос
+        $response = $this->aiService->query($chatPrompt, json_encode($testResult));
 
         return response()->json([
             'success' => true,
@@ -277,6 +275,7 @@ class TestController extends Controller
         - Используй конкретные примеры из теста, где это возможно
         - Фокусируйся на объяснении и помощи, а не на критике
         - Не используй escape-последовательности для кириллических символов
+        - Отвечай ТОЛЬКО на русском языке
 
         **Вопрос студента:** {$userQuestion}
 

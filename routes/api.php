@@ -78,3 +78,6 @@ Route::post('/test-chat', [App\Http\Controllers\API\TestController::class, 'chat
 // Добавляем маршрут для чат-бота поиска курсов
 Route::post('/course-finder', [App\Http\Controllers\API\CourseFinderController::class, 'findCourse']);
 
+// Тестовый маршрут для проверки работы с OpenRouter и моделью qwen/qwq-32b:free
+Route::post('/test-openrouter-qwen', [App\Http\Controllers\API\OpenRouterTestController::class, 'testQwen']);
+

@@ -3,14 +3,14 @@
 namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
-use App\Services\MistralService;
+use App\Services\AIServiceInterface;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use App\Models\Courses;
 
 class CourseFinderController extends Controller
 {
-    private MistralService $mistralService;
+    private AIServiceInterface $aiService;
 
     /**
      * Промпт для поиска курсов
@@ -69,9 +69,9 @@ class CourseFinderController extends Controller
     /**
      * Constructor with dependency injection
      */
-    public function __construct(MistralService $mistralService)
+    public function __construct(AIServiceInterface $aiService)
     {
-        $this->mistralService = $mistralService;
+        $this->aiService = $aiService;
     }
 
     /**
@@ -98,30 +98,11 @@ class CourseFinderController extends Controller
             ], 404);
         }
 
-        // Преобразуем данные в более четкий формат для нейросети
-//        $formattedCourses = $courses->map(function ($course) {
-//            return [
-//                'id' => $course->id,
-//                'name' => $course->name,
-//                'description' => $course->description,
-//                'instructor' => $course->instructor,
-//                'rating' => $course->rating,
-//                'price' => $course->price,
-//                'episodes' => $course->episodes->map(function ($episode) {
-//                    return [
-//                        'id' => $episode->id,
-//                        'name' => $episode->name,
-//                        'description' => $episode->description,
-//                    ];
-//                })
-//            ];
-//        });
-
         // Формируем промпт с запросом пользователя
         $prompt = str_replace('{userQuery}', $userQuery, self::$courseFinderPrompt);
 
-        // Получаем ответ от нейросети
-        $response = $this->mistralService->query($prompt, json_encode($courses));
+        // Получаем ответ от нейросети через абстрактный интерфейс
+        $response = $this->aiService->query($prompt, json_encode($courses));
 
         return response()->json([
             'success' => true,
