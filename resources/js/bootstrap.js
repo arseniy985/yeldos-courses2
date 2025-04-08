@@ -9,6 +9,10 @@ window.axios = axios;
 
 window.axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
 
+// Установка таймаута в 50 секунд (50000 мс) для всех запросов axios
+// Это важно для запросов к нейросети, которые могут занимать длительное время
+window.axios.defaults.timeout = 50000;
+
 /**
  * Echo exposes an expressive API for subscribing to channels and listening
  * for events that are broadcast by Laravel. Echo and event broadcasting
