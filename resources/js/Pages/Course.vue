@@ -11,6 +11,11 @@ defineProps({
 });
 
 const trimLongText = (string, length) => {
+    // Проверяем, что строка существует
+    if (!string) {
+        return ""; // Возвращаем пустую строку, если значение undefined, null или пустое
+    }
+    
     if (string.length <= length) {
         return string;
     } else {
@@ -25,135 +30,219 @@ const trimLongText = (string, length) => {
 <template>
     <Head :title="course.title" />
     <NavLayout>
-        <main class="container mx-auto py-8">
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-                <div class="md:col-span-2 bg-gray-800 rounded-lg p-6">
-                    <h2 class="text-xl font-semibold mb-4 text-white">
-                        Course Overview
-                    </h2>
-                    <p
-                        class="text-white mb-4 flex items-center justify-center text-justify"
-                    >
-                        {{ course.overview }}
-                    </p>
-                </div>
-                <div class="bg-gray-800 rounded-lg p-6">
-                    <img
-                        :src="course.thumbnail"
-                        alt="Course Image"
-                        class="mb-4 rounded-lg"
-                    />
-                    <h2 class="text-xl font-semibold mb-4 text-white">
-                        {{ course.title }}
-                    </h2>
-                    <div>
-                        <img
-                            class="rounded-full m-1.5 mt-2 flex items-baseline w-8 h-8"
-                            :src="`https://picsum.photos/${
-                                course.id + 190
-                            }/300`"
+        <!-- Секция Hero с информацией о курсе -->
+        <div class="bg-gradient-to-r from-primary-50 to-primary-100 py-8 px-4 rounded-xl mb-8">
+            <div class="container mx-auto">
+                <div class="flex flex-col md:flex-row items-center gap-8">
+                    <!-- Изображение курса -->
+                    <div class="md:w-1/3">
+                        <img 
+                            :src="course.thumbnail" 
+                            :alt="course.title" 
+                            class="w-full h-auto rounded-xl shadow-lg object-cover"
                         />
                     </div>
-                    <div class="px-1.5 text-white mt-1">
-                        <div
-                            class="text-[14px] text-gray-300 font-extrabold flex gap-1 items-center cursor-pointer"
-                        >
-                            {{ course.instructor }}
+                    
+                    <!-- Информация о курсе -->
+                    <div class="md:w-2/3">
+                        <h1 class="text-3xl md:text-4xl font-bold text-primary-900 mb-3">{{ course.title }}</h1>
+                        
+                        <div class="flex items-center text-primary-700 mb-4">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
+                                <path d="M10.394 2.08a1 1 0 00-.788 0l-7 3a1 1 0 000 1.84L5.25 8.051a.999.999 0 01.356-.257l4-1.714a1 1 0 11.788 1.838L7.667 9.088l1.94.831a1 1 0 00.787 0l7-3a1 1 0 000-1.838l-7-3zM3.31 9.397L5 10.12v4.102a8.969 8.969 0 00-1.05-.174 1 1 0 01-.89-.89 11.115 11.115 0 01.25-3.762zM9.3 16.573A9.026 9.026 0 007 14.935v-3.957l1.818.78a3 3 0 002.364 0l5.508-2.361a11.026 11.026 0 01.25 3.762 1 1 0 01-.89.89 8.968 8.968 0 00-5.35 2.524 1 1 0 01-1.4 0zM6 18a1 1 0 001-1v-2.065a8.935 8.935 0 00-2-.712V17a1 1 0 001 1z" />
+                            </svg>
+                            <span class="font-medium">{{ course.instructor }}</span>
                         </div>
-                        <div class="flex">
-                            <Star fillColor="#FFD700" :size="17" />
-                            <Star fillColor="#FFD700" :size="17" />
-                            <Star fillColor="#FFD700" :size="17" />
-                            <Star fillColor="#FFD700" :size="17" />
-                            <StarHalfFull fillColor="#FFD700" :size="17" />
+                        
+                        <div class="flex flex-wrap gap-4 mb-6">
+                            <div class="bg-white px-4 py-2 rounded-lg shadow-sm">
+                                <div class="text-xs text-primary-500 mb-1">Продолжительность</div>
+                                <div class="flex items-center text-primary-800 font-semibold">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" viewBox="0 0 20 20" fill="currentColor">
+                                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd" />
+                                    </svg>
+                                    {{ episodes?.length || 0 }} уроков
+                                </div>
+                            </div>
+                            
+                            <div class="bg-white px-4 py-2 rounded-lg shadow-sm">
+                                <div class="text-xs text-primary-500 mb-1">Тестов</div>
+                                <div class="flex items-center text-primary-800 font-semibold">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" viewBox="0 0 20 20" fill="currentColor">
+                                        <path d="M9 2a1 1 0 000 2h2a1 1 0 100-2H9z" />
+                                        <path fill-rule="evenodd" d="M4 5a2 2 0 012-2 3 3 0 003 3h2a3 3 0 003-3 2 2 0 012 2v11a2 2 0 01-2 2H6a2 2 0 01-2-2V5zm3 4a1 1 0 000 2h.01a1 1 0 100-2H7zm3 0a1 1 0 000 2h3a1 1 0 100-2h-3zm-3 4a1 1 0 100 2h.01a1 1 0 100-2H7zm3 0a1 1 0 100 2h3a1 1 0 100-2h-3z" clip-rule="evenodd" />
+                                    </svg>
+                                    {{ tests?.length || 0 }} тестов
+                                </div>
+                            </div>
+                            
+                            <div class="bg-white px-4 py-2 rounded-lg shadow-sm">
+                                <div class="text-xs text-primary-500 mb-1">Цена</div>
+                                <div class="text-primary-800 font-bold">
+                                    {{ course.current_price }} ₸
+                                </div>
+                            </div>
                         </div>
-                        <div class="text-lg mb-1 mt-3 text-gray-300">
-                            <span
-                                class="text-gray-400 line-through"
-                                v-if="course.orig_price > course.current_price"
-                                >Php {{ course.orig_price }}</span
-                            >
-                            Php {{ course.current_price }}
-                        </div>
+                        
+                        <button class="bg-primary-600 text-white px-8 py-3 rounded-lg font-medium hover:bg-primary-700 transition-colors shadow-md flex items-center">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
+                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd" />
+                            </svg>
+                            Записаться на курс
+                        </button>
                     </div>
-                    <button
-                        class="mt-3 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-800 duration-300"
-                    >
-                        Enroll Now
-                    </button>
                 </div>
-                <div class="md:col-span-3 bg-gray-800 rounded-lg p-6">
-                    <h2 class="text-xl font-semibold mb-4 text-white">
-                        Episodes List
-                    </h2>
-                    <ul class="space-y-4">
-                        <div v-for="episode in episodes" :key="episode">
-                            <Link
-                                :href="
-                                    route('course.watchepisode', {
-                                        id: episode.id,
-                                    })
-                                "
-                                class="flex items-center justify-center cursor-pointer"
-                            >
-                                <li
-                                    class="w-full flex items-center space-x-4 hover:bg-gray-900 rounded-lg"
-                                >
-                                    <div class="flex-shrink-0">
-                                        <img
-                                            class="h-40 w-60 rounded-md"
-                                            :src="episode.episode_thumbnail"
-                                            alt="Video Thumbnail"
-                                        />
-                                    </div>
-                                    <div class="flex-grow">
-                                        <h3
-                                            class="text-lg font-semibold text-white"
-                                        >
-                                            {{ episode.episode_title }}
-                                        </h3>
-                                        <p class="text-gray-400">
-                                            {{
-                                                trimLongText(
-                                                    episode.episode_description,
-                                                    150
-                                                )
-                                            }}
-                                        </p>
-                                    </div>
-                                </li>
-                            </Link>
-                        </div>
-                    </ul>
-                </div>
-                
-                <!-- Секция с тестами курса -->
-                <div v-if="tests && tests.length > 0" class="md:col-span-3 bg-gray-800 rounded-lg p-6 mt-8">
-                    <div class="flex justify-between items-center mb-6">
-                        <h2 class="text-xl font-semibold text-white">
-                            Тесты для курса
+            </div>
+        </div>
+        
+        <!-- Содержание курса -->
+        <div class="container mx-auto">
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <!-- Основной контент (эпизоды) -->
+                <div class="lg:col-span-2">
+                    <!-- О курсе -->
+                    <div class="bg-white rounded-xl shadow-sm p-6 mb-8">
+                        <h2 class="text-xl font-semibold text-primary-900 mb-4 flex items-center">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2 text-primary-600" viewBox="0 0 20 20" fill="currentColor">
+                                <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd" />
+                            </svg>
+                            О курсе
                         </h2>
+                        <p class="text-primary-700 leading-relaxed">{{ course.overview }}</p>
                     </div>
                     
-                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                        <div v-for="test in tests" :key="test.id" 
-                            class="bg-gray-700 border border-gray-600 rounded-lg shadow-lg hover:shadow-2xl transition p-6">
-                            <h3 class="text-lg font-semibold text-white mb-3">{{ test.title }}</h3>
-                            
-                            <div class="mt-2 text-sm text-gray-300">
-                                Количество вопросов: {{ test.questions_count || 'не указано' }}
-                            </div>
-                            
-                            <div class="mt-4 flex justify-end">
-                                <Link :href="route('student.test.take', { id: test.id })" 
-                                    class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition">
-                                    Пройти тест
+                    <!-- Эпизоды курса -->
+                    <div class="bg-white rounded-xl shadow-sm p-6">
+                        <h2 class="text-xl font-semibold text-primary-900 mb-6 flex items-center">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2 text-primary-600" viewBox="0 0 20 20" fill="currentColor">
+                                <path d="M7 4a3 3 0 016 0v4a3 3 0 11-6 0V4z" />
+                                <path d="M5.5 9.643a.5.5 0 01-.5.5H3a.5.5 0 01-.5-.5V9a4 4 0 014-4V4a5 5 0 00-5 5v.643a1.5 1.5 0 001.5 1.5H4l6 6 3-3-4.5-4.5v-1a3 3 0 016 0v1a.5.5 0 01-.5.5H13a.5.5 0 01-.5-.5V9a4 4 0 01-4-4h-.5a.5.5 0 01-.5.5zm14 0a.5.5 0 01-.5.5H17a.5.5 0 01-.5-.5V9a4 4 0 00-1-2.646V11.5a.5.5 0 01-.5.5H14a.5.5 0 01-.5-.5v-7a.5.5 0 01.5-.5h3a.5.5 0 01.5.5v.5a5 5 0 012 4v.643z" />
+                            </svg>
+                            Содержание курса ({{ episodes?.length || 0 }} уроков)
+                        </h2>
+                        
+                        <div class="space-y-4">
+                            <div v-for="(episode, index) in episodes" :key="episode.id">
+                                <Link :href="route('course.watchepisode', { id: episode.id })" 
+                                      class="block hover:bg-primary-50 rounded-xl transition-colors border border-primary-100 overflow-hidden">
+                                    <div class="flex items-start">
+                                        <!-- Номер эпизода -->
+                                        <div class="bg-primary-600 text-white font-semibold h-full flex items-center justify-center p-4 md:p-6">
+                                            <span class="text-lg md:text-xl">{{ index + 1 }}</span>
+                                        </div>
+                                        
+                                        <!-- Информация об эпизоде -->
+                                        <div class="flex-1 p-4 md:p-6">
+                                            <div class="flex flex-col md:flex-row md:justify-between md:items-center">
+                                                <h3 class="font-medium text-primary-900 text-lg">{{ episode.title || 'Эпизод ' + (index + 1) }}</h3>
+                                                <div class="mt-2 md:mt-0 flex items-center text-primary-500">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1" viewBox="0 0 20 20" fill="currentColor">
+                                                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd" />
+                                                    </svg>
+                                                    <span class="text-sm">{{ episode.duration || '15:00' }}</span>
+                                                </div>
+                                            </div>
+                                            <p class="text-sm text-primary-600 mt-2" v-if="episode.description">{{ trimLongText(episode.description, 150) }}</p>
+                                            <p class="text-sm text-primary-500 mt-2" v-else>Изучите этот эпизод чтобы получить новые знания по курсу.</p>
+                                            
+                                            <div class="mt-3 flex items-center">
+                                                <div class="bg-primary-100 text-primary-600 text-xs px-2 py-1 rounded-full font-medium">
+                                                    {{ episode.video_type || 'Видеоурок' }}
+                                                </div>
+                                                <div class="ml-2 flex items-center text-primary-600">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" viewBox="0 0 20 20" fill="currentColor">
+                                                        <path d="M10 12a2 2 0 100-4 2 2 0 000 4z" />
+                                                        <path fill-rule="evenodd" d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z" clip-rule="evenodd" />
+                                                    </svg>
+                                                    <span class="text-xs">Просмотреть</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </Link>
                             </div>
+                            
+                            <div v-if="!episodes || !episodes.length" class="py-8 text-primary-500 text-center">
+                                <svg class="w-16 h-16 mx-auto mb-4 text-primary-300" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 4v16M17 4v16M3 8h4m10 0h4M3 12h18M3 16h4m10 0h4M4 20h16a1 1 0 001-1V5a1 1 0 00-1-1H4a1 1 0 00-1 1v14a1 1 0 001 1z"></path>
+                                </svg>
+                                <h3 class="text-lg font-medium text-primary-700 mb-2">Доступных эпизодов пока нет</h3>
+                                <p class="text-primary-500">Уроки будут добавлены в ближайшее время.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Боковая панель -->
+                <div class="lg:col-span-1">
+                    <!-- Тесты -->
+                    <div class="bg-white rounded-xl shadow-sm p-6 mb-6">
+                        <h2 class="text-xl font-semibold text-primary-900 mb-4 flex items-center">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2 text-primary-600" viewBox="0 0 20 20" fill="currentColor">
+                                <path d="M9 2a1 1 0 000 2h2a1 1 0 100-2H9z" />
+                                <path fill-rule="evenodd" d="M4 5a2 2 0 012-2 3 3 0 003 3h2a3 3 0 003-3 2 2 0 012 2v11a2 2 0 01-2 2H6a2 2 0 01-2-2V5zm3 4a1 1 0 000 2h.01a1 1 0 100-2H7zm3 0a1 1 0 000 2h3a1 1 0 100-2h-3zm-3 4a1 1 0 100 2h.01a1 1 0 100-2H7zm3 0a1 1 0 100 2h3a1 1 0 100-2h-3z" clip-rule="evenodd" />
+                            </svg>
+                            Тесты курса
+                        </h2>
+                        
+                        <div class="space-y-3">
+                            <div v-for="(test, index) in tests" :key="test.id" 
+                                 class="p-4 border border-primary-100 rounded-lg hover:bg-primary-50 transition-colors">
+                                <div class="flex justify-between items-center">
+                                    <span class="text-primary-800 font-medium">{{ test.title }}</span>
+                                    <Link :href="route('student.test.take', { id: test.id })" 
+                                          class="text-primary-50 bg-primary-600 hover:bg-primary-700 px-3 py-1 rounded-md text-sm font-medium transition-colors">
+                                        Начать тест
+                                    </Link>
+                                </div>
+                            </div>
+                            
+                            <div v-if="!tests.length" class="py-4 text-primary-500 text-center">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 mx-auto mb-2 text-primary-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                                </svg>
+                                <p>Тесты для этого курса пока не доступны</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Дополнительные материалы -->
+                    <div class="bg-white rounded-xl shadow-sm p-6">
+                        <h2 class="text-xl font-semibold text-primary-900 mb-4 flex items-center">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2 text-primary-600" viewBox="0 0 20 20" fill="currentColor">
+                                <path fill-rule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z" clip-rule="evenodd" />
+                            </svg>
+                            Материалы для скачивания
+                        </h2>
+                        
+                        <div class="space-y-3">
+                            <a href="#" class="block p-4 border border-primary-100 rounded-lg hover:bg-primary-50 transition-colors">
+                                <div class="flex items-center">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-primary-500 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                                    </svg>
+                                    <div>
+                                        <div class="text-primary-800 font-medium">Конспект лекций</div>
+                                        <div class="text-primary-500 text-sm">PDF, 2.3 MB</div>
+                                    </div>
+                                </div>
+                            </a>
+                            
+                            <a href="#" class="block p-4 border border-primary-100 rounded-lg hover:bg-primary-50 transition-colors">
+                                <div class="flex items-center">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-primary-500 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3M3 17V7a2 2 0 012-2h6l2 2h6a2 2 0 012 2v8a2 2 0 01-2 2H5a2 2 0 01-2-2z" />
+                                    </svg>
+                                    <div>
+                                        <div class="text-primary-800 font-medium">Исходный код примеров</div>
+                                        <div class="text-primary-500 text-sm">ZIP, 1.7 MB</div>
+                                    </div>
+                                </div>
+                            </a>
                         </div>
                     </div>
                 </div>
             </div>
-        </main>
+        </div>
     </NavLayout>
 </template>

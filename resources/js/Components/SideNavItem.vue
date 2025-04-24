@@ -1,26 +1,20 @@
 <template>
     <li
-        :class="[!openSideNav ? 'p-2' : 'flex items-center p-2']"
-        class="text-white text-sm font-semibold text-center hover:bg-gray-900 rounded-lg cursor-pointer"
+        :class="[!openSideNav ? 'justify-center' : 'flex items-center']"
+        class="px-3 py-2.5 text-primary-700 text-sm font-medium rounded-lg hover:bg-primary-50 cursor-pointer transition-colors duration-200"
     >
-        <div :class="[!openSideNav ? 'w-full flex justify-center' : '']">
-            <component :is="icon" />
+        <div v-if="openSideNav" class="mr-3 flex-1">
+            {{ iconString }}
         </div>
-        <div v-if="openSideNav" class="mt-1 ml-4">
-            <span>{{ iconString }}</span>
+        <div class="flex items-center justify-center w-8 h-8 text-primary-600">
+            <component :is="icon" />
         </div>
     </li>
 </template>
 
 <script setup>
 import { defineProps, toRefs } from "vue";
-
-import Home from "@/Components/Icons/HomeIcon.vue";
-import SchoolIcon from "@/Components/Icons/SchoolIcon.vue";
-import LibraryIcon from "@/Components/Icons/LibraryIcon.vue";
-import BookPlusIcon from "@/Components/Icons/BookPlusIcon.vue";
-import BookMultipleIcon from "@/Components/Icons/BookMultipleIcon.vue";
-import TestIcon from "@/Components/Icons/TestIcon.vue";
+import { IconComponents } from "@/Components/Icons";
 
 const props = defineProps({
     openSideNav: Boolean,
@@ -31,11 +25,11 @@ const { openSideNav, iconString } = toRefs(props);
 
 let icon = null;
 
-if (iconString.value === "Home") icon = Home;
-if (iconString.value === "Courses") icon = SchoolIcon;
-if (iconString.value === "My Library") icon = LibraryIcon;
-if (iconString.value === "Manage Students") icon = SchoolIcon;
-if (iconString.value === "Create Course") icon = BookPlusIcon;
-if (iconString.value === "Manage Courses") icon = BookMultipleIcon;
- if (iconString.value === "Tests") icon = TestIcon;
+if (iconString.value === "Home") icon = IconComponents.HomeOutlineIcon;
+if (iconString.value === "Courses") icon = IconComponents.BookOpenIcon;
+if (iconString.value === "My Library") icon = IconComponents.BookOpenIcon;
+if (iconString.value === "Manage Students") icon = IconComponents.UsersIcon;
+if (iconString.value === "Create Course") icon = IconComponents.PlusCircleIcon;
+if (iconString.value === "Manage Courses") icon = IconComponents.CollectionIcon;
+if (iconString.value === "Tests") icon = IconComponents.ClipboardCheckIcon;
 </script>

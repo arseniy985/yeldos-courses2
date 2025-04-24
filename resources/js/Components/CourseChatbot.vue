@@ -3,52 +3,52 @@ import { ref, nextTick, onMounted } from 'vue';
 import axios from 'axios';
 import { marked } from 'marked';
 
-// Настраиваем marked для рендеринга markdown
+// Configure marked for markdown rendering
 marked.setOptions({
-  breaks: true,        // Преобразовывать символы новой строки в <br>
-  gfm: true,           // Использовать GitHub Flavored Markdown
-  sanitize: false      // Разрешить HTML-теги (но мы используем дополнительную очистку на стороне сервера)
+  breaks: true,        // Convert newline characters to <br>
+  gfm: true,           // Use GitHub Flavored Markdown
+  sanitize: false      // Allow HTML tags (but we use additional server-side sanitization)
 });
 
-// Состояние компонента
-const isOpen = ref(false); // Чат открыт или нет
-const messages = ref([]); // История сообщений
-const userInput = ref(''); // Текущий ввод пользователя
-const isLoading = ref(false); // Индикатор загрузки
-const chatContainer = ref(null); // Ссылка на контейнер чата для прокрутки
+// Component state
+const isOpen = ref(false); // Chat is open or not
+const messages = ref([]); // Message history
+const userInput = ref(''); // Current user input
+const isLoading = ref(false); // Loading indicator
+const chatContainer = ref(null); // Reference to chat container for scrolling
 
-// Предустановленные вопросы для быстрого выбора
+// Preset questions for quick selection
 const suggestedQuestions = [
-  'Я хочу изучать программирование, что можете посоветовать?',
-  'Какие есть курсы по дизайну?',
-  'Порекомендуйте курсы для начинающих',
-  'Какие курсы самые популярные?'
+  'I want to learn programming, what do you recommend?',
+  'What courses on design do you have?',
+  'Recommend courses for beginners',
+  'What are the most popular courses?'
 ];
 
-// Инициализация чат-бота
+// Initialize chatbot
 onMounted(() => {
-  // Добавляем приветственное сообщение при загрузке
+  // Add welcome message on load
   messages.value.push({
     id: Date.now(),
-    text: 'Привет! Я ваш помощник по выбору курсов. Расскажите, что вас интересует, и я помогу подобрать подходящие курсы. Можете спросить о конкретной теме или уровне обучения.',
+    text: 'Hi! I\'m your course selection assistant. Tell me what you\'re interested in, and I\'ll help you find suitable courses. Feel free to ask about a specific topic or skill level.',
     isUser: false,
     timestamp: new Date()
   });
 });
 
-// Переключение видимости чата
+// Toggle chat visibility
 const toggleChat = () => {
   isOpen.value = !isOpen.value;
 };
 
-// Отправка сообщения
+// Send message
 const sendMessage = async () => {
   if (!userInput.value.trim() || isLoading.value) return;
   
   const messageText = userInput.value.trim();
-  userInput.value = ''; // Очищаем поле ввода
+  userInput.value = ''; // Clear input field
   
-  // Добавляем сообщение пользователя в историю
+  // Add user message to history
   messages.value.push({
     id: Date.now(),
     text: messageText,
@@ -56,20 +56,20 @@ const sendMessage = async () => {
     timestamp: new Date()
   });
   
-  // Прокручиваем чат вниз после добавления сообщения
+  // Scroll chat down after adding message
   await nextTick();
   scrollToBottom();
   
-  // Устанавливаем состояние загрузки
+  // Set loading state
   isLoading.value = true;
   
   try {
-    // Отправляем запрос к API
+    // Send request to API
     const response = await axios.post('/api/course-finder', {
       message: messageText
     });
     
-    // Добавляем ответ бота в историю сообщений
+    // Add bot response to message history
     messages.value.push({
       id: Date.now(),
       text: response.data.message,
@@ -77,14 +77,14 @@ const sendMessage = async () => {
       timestamp: new Date()
     });
   } catch (error) {
-    console.error('Ошибка при запросе к API:', error);
+    console.error('Error querying API:', error);
     
-    // Добавляем сообщение об ошибке
-    let errorMessage = 'Извините, возникла ошибка при обработке вашего запроса. Пожалуйста, попробуйте еще раз или задайте другой вопрос.';
+    // Add error message
+    let errorMessage = 'Sorry, there was an error processing your request. Please try again or ask a different question.';
     
-    // Проверяем, является ли ошибка таймаутом
+    // Check if error is a timeout
     if (error.code === 'ECONNABORTED') {
-      errorMessage = 'Превышено время ожидания ответа от сервера. Запрос к нейросети может занимать длительное время. Пожалуйста, попробуйте задать более короткий или простой вопрос.';
+      errorMessage = 'The server response timed out. Queries to the neural network may take some time. Please try a shorter or simpler question.';
     }
     
     messages.value.push({
@@ -96,31 +96,31 @@ const sendMessage = async () => {
   } finally {
     isLoading.value = false;
     
-    // Прокручиваем чат вниз после получения ответа
+    // Scroll chat down after receiving response
     await nextTick();
     scrollToBottom();
   }
 };
 
-// Выбор предустановленного вопроса
+// Select preset question
 const selectQuestion = (question) => {
   userInput.value = question;
   sendMessage();
 };
 
-// Отображение времени сообщения
+// Display message time
 const formatTime = (timestamp) => {
   return new Date(timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
 };
 
-// Прокрутка чата к последнему сообщению
+// Scroll chat to the last message
 const scrollToBottom = () => {
   if (chatContainer.value) {
     chatContainer.value.scrollTop = chatContainer.value.scrollHeight;
   }
 };
 
-// Рендеринг markdown в HTML
+// Render markdown to HTML
 const renderMarkdown = (text) => {
   if (!text) return '';
   return marked(text);
@@ -129,7 +129,7 @@ const renderMarkdown = (text) => {
 
 <template>
   <div class="chatbot-widget">
-    <!-- Кнопка для открытия/закрытия чата -->
+    <!-- Button to open/close chat -->
     <button 
       @click="toggleChat" 
       class="chatbot-toggle-button"
@@ -139,7 +139,7 @@ const renderMarkdown = (text) => {
         <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
         </svg>
-        <span>Помощник по курсам</span>
+        <span>Course Assistant</span>
       </div>
       <div v-else>
         <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -148,9 +148,9 @@ const renderMarkdown = (text) => {
       </div>
     </button>
     
-    <!-- Окно чата -->
+    <!-- Chat window -->
     <div class="chatbot-window" :class="{ 'chatbot-open': isOpen }">
-      <!-- Заголовок чата -->
+      <!-- Chat header -->
       <div class="chatbot-header">
         <div class="flex items-center">
           <div class="chatbot-avatar">
@@ -159,8 +159,8 @@ const renderMarkdown = (text) => {
             </svg>
           </div>
           <div>
-            <h3 class="chatbot-title">Помощник по курсам</h3>
-            <p class="chatbot-subtitle">Помогу найти подходящий курс</p>
+            <h3 class="chatbot-title">Course Assistant</h3>
+            <p class="chatbot-subtitle">I'll help find the right course</p>
           </div>
         </div>
         <button @click="toggleChat" class="chatbot-close">
@@ -170,7 +170,7 @@ const renderMarkdown = (text) => {
         </button>
       </div>
       
-      <!-- Тело чата с сообщениями -->
+      <!-- Chat body with messages -->
       <div class="chatbot-body" ref="chatContainer">
         <div v-for="message in messages" :key="message.id" class="chatbot-message-container">
           <div 
@@ -192,7 +192,7 @@ const renderMarkdown = (text) => {
           </div>
         </div>
         
-        <!-- Индикатор загрузки -->
+        <!-- Loading indicator -->
         <div v-if="isLoading" class="chatbot-message-container">
           <div class="chatbot-message chatbot-bot-message">
             <div class="chatbot-typing-indicator">
@@ -204,28 +204,16 @@ const renderMarkdown = (text) => {
         </div>
       </div>
 
-      <!-- Быстрые вопросы -->
-      <div class="chatbot-suggestions" v-if="messages.length < 3">
-        <p class="chatbot-suggestions-title">Примеры вопросов:</p>
-        <div class="chatbot-suggestions-container">
-          <button 
-            v-for="question in suggestedQuestions" 
-            :key="question" 
-            @click="selectQuestion(question)"
-            class="chatbot-suggestion-button"
-          >
-            {{ question }}
-          </button>
-        </div>
-      </div>
+      <!-- Quick questions -->
+     
       
-      <!-- Ввод сообщения -->
+      <!-- Message input -->
       <div class="chatbot-footer">
         <form @submit.prevent="sendMessage" class="chatbot-input-container">
           <input 
             v-model="userInput" 
             type="text" 
-            placeholder="Напишите ваш вопрос..." 
+            placeholder="Type your question..." 
             class="chatbot-input"
             :disabled="isLoading"
           />
@@ -254,318 +242,282 @@ const renderMarkdown = (text) => {
   bottom: 20px;
   right: 20px;
   z-index: 1000;
-  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-family: 'Figtree', sans-serif;
 }
 
 .chatbot-toggle-button {
+  background-color: theme('colors.primary.600');
+  color: white;
+  border: none;
+  border-radius: 50px;
+  padding: 10px 20px;
   display: flex;
   align-items: center;
   justify-content: center;
-  width: auto;
-  min-width: 52px;
-  height: 52px;
-  border-radius: 26px;
-  background-color: #4f46e5;
-  color: white;
-  border: none;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   cursor: pointer;
+  box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3);
   transition: all 0.3s ease;
-  padding: 0 16px;
-  font-weight: 500;
 }
 
 .chatbot-toggle-button:hover {
-  background-color: #4338ca;
-  box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
+  background-color: theme('colors.primary.700');
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(79, 70, 229, 0.4);
 }
 
 .chatbot-toggle-button.chatbot-open {
   width: 52px;
+  height: 52px;
   min-width: unset;
   border-radius: 50%;
+  padding: 0;
 }
 
 .chatbot-window {
-  position: absolute;
-  bottom: 70px;
-  right: 0;
+  position: fixed;
+  bottom: 90px;
+  right: 20px;
   width: 380px;
-  height: 500px;
-  background-color: #1e293b;
-  border-radius: 12px;
-  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+  height: 550px;
+  background-color: white;
+  border-radius: 16px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
   display: flex;
   flex-direction: column;
-  overflow: hidden;
+  transform: scale(0);
   opacity: 0;
-  transform: translateY(20px) scale(0.95);
-  pointer-events: none;
-  transition: all 0.3s ease;
+  transform-origin: bottom right;
+  transition: all 0.3s cubic-bezier(0.68, -0.55, 0.27, 1.55);
 }
 
 .chatbot-window.chatbot-open {
+  transform: scale(1);
   opacity: 1;
-  transform: translateY(0) scale(1);
-  pointer-events: all;
 }
 
 .chatbot-header {
-  background-color: #2d3748;
+  background: linear-gradient(to right, theme('colors.primary.600'), theme('colors.primary.500'));
   color: white;
-  padding: 12px 16px;
+  padding: 18px 20px;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  border-bottom: 1px solid #4a5568;
+  border-top-left-radius: 16px;
+  border-top-right-radius: 16px;
 }
 
 .chatbot-avatar {
-  width: 36px;
-  height: 36px;
-  background-color: #4f46e5;
+  background-color: theme('colors.primary.400');
   border-radius: 50%;
+  width: 42px;
+  height: 42px;
   display: flex;
   align-items: center;
   justify-content: center;
   margin-right: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
 }
 
 .chatbot-title {
   font-weight: 600;
-  font-size: 16px;
+  font-size: 18px;
+  margin: 0;
 }
 
 .chatbot-subtitle {
-  font-size: 12px;
-  color: #a0aec0;
+  font-size: 13px;
+  margin: 0;
+  opacity: 0.9;
 }
 
 .chatbot-close {
-  background: none;
+  background: rgba(255, 255, 255, 0.2);
   border: none;
-  color: #a0aec0;
+  border-radius: 50%;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
   cursor: pointer;
+  transition: background-color 0.2s;
 }
 
 .chatbot-close:hover {
-  color: white;
+  background: rgba(255, 255, 255, 0.3);
 }
 
 .chatbot-body {
-  flex: 1;
+  flex-grow: 1;
   padding: 16px;
   overflow-y: auto;
-  background-color: #1e293b;
+  background-color: theme('colors.surface.50');
+  scroll-behavior: smooth;
 }
 
 .chatbot-message-container {
-  margin-bottom: 12px;
+  margin-bottom: 16px;
 }
 
 .chatbot-message {
-  max-width: 80%;
-  padding: 10px 14px;
-  border-radius: 12px;
-  line-height: 1.4;
-  word-break: break-word;
-}
-
-.chatbot-user-message {
-  background-color: #4f46e5;
-  color: white;
-  margin-left: auto;
-  border-bottom-right-radius: 4px;
+  padding: 12px 16px;
+  border-radius: 18px;
+  max-width: 85%;
+  word-wrap: break-word;
+  line-height: 1.5;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
 }
 
 .chatbot-bot-message {
-  background-color: #2d3748;
-  color: #e2e8f0;
+  background-color: white;
+  color: theme('colors.primary.900');
+  border-top-left-radius: 4px;
   margin-right: auto;
-  border-bottom-left-radius: 4px;
+  border: 1px solid theme('colors.primary.100');
+}
+
+.chatbot-user-message {
+  background: linear-gradient(to right, theme('colors.primary.500'), theme('colors.primary.600'));
+  color: white;
+  border-top-right-radius: 4px;
+  margin-left: auto;
 }
 
 .chatbot-timestamp {
-  margin-top: 4px;
   font-size: 10px;
-  color: #64748b;
+  color: theme('colors.surface.400');
+  margin-top: 5px;
 }
 
 .chatbot-footer {
-  padding: 12px 16px;
-  background-color: #2d3748;
-  border-top: 1px solid #4a5568;
+  padding: 16px;
+  background-color: white;
+  border-top: 1px solid theme('colors.surface.200');
 }
 
 .chatbot-input-container {
   display: flex;
   align-items: center;
-  background-color: #1e293b;
-  border-radius: 8px;
-  overflow: hidden;
 }
 
 .chatbot-input {
-  flex: 1;
-  padding: 10px 14px;
-  border: none;
-  background-color: transparent;
-  color: white;
+  flex-grow: 1;
+  border: 1px solid theme('colors.surface.300');
+  border-radius: 24px;
+  padding: 10px 18px;
   outline: none;
+  transition: all 0.3s;
+  font-size: 14px;
 }
 
-.chatbot-input::placeholder {
-  color: #64748b;
+.chatbot-input:focus {
+  border-color: theme('colors.primary.500');
+  box-shadow: 0 0 0 2px theme('colors.primary.100');
 }
 
 .chatbot-send-button {
-  background-color: #4f46e5;
+  background: linear-gradient(to right, theme('colors.primary.500'), theme('colors.primary.600'));
   color: white;
-  width: 42px;
-  height: 42px;
   border: none;
+  border-radius: 50%;
+  width: 44px;
+  height: 44px;
+  margin-left: 12px;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: background-color 0.2s ease;
+  transition: all 0.3s;
+  box-shadow: 0 2px 6px rgba(79, 70, 229, 0.2);
 }
 
-.chatbot-send-button:hover:not(:disabled) {
-  background-color: #4338ca;
-}
-
-.chatbot-send-button:disabled {
-  background-color: #4f46e5;
-  opacity: 0.5;
-  cursor: not-allowed;
+.chatbot-send-button:hover {
+  background: linear-gradient(to right, theme('colors.primary.600'), theme('colors.primary.700'));
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(79, 70, 229, 0.3);
 }
 
 .chatbot-typing-indicator {
   display: flex;
   align-items: center;
+  padding: 0 8px;
 }
 
 .chatbot-typing-indicator span {
-  width: 8px;
   height: 8px;
-  background-color: #a0aec0;
+  width: 8px;
+  margin: 0 3px;
+  background-color: theme('colors.primary.400');
   border-radius: 50%;
-  margin: 0 2px;
-  animation: typingBounce 1.4s infinite ease-in-out;
-}
-
-.chatbot-typing-indicator span:nth-child(1) {
-  animation-delay: 0s;
+  display: inline-block;
+  animation: bounce 1.3s linear infinite;
 }
 
 .chatbot-typing-indicator span:nth-child(2) {
-  animation-delay: 0.2s;
+  animation-delay: 0.15s;
 }
 
 .chatbot-typing-indicator span:nth-child(3) {
-  animation-delay: 0.4s;
-}
-
-@keyframes typingBounce {
-  0%, 80%, 100% {
-    transform: translateY(0);
-  }
-  40% {
-    transform: translateY(-6px);
-  }
+  animation-delay: 0.3s;
 }
 
 .chatbot-suggestions {
-  padding: 8px 16px;
-  background-color: #1e293b;
-  border-top: 1px solid #4a5568;
+  padding: 16px;
+  background-color: white;
+  border-top: 1px solid theme('colors.primary.100');
 }
 
 .chatbot-suggestions-title {
   font-size: 12px;
-  color: #a0aec0;
-  margin-bottom: 8px;
+  color: theme('colors.primary.600');
+  margin-bottom: 12px;
+  font-weight: 600;
 }
 
 .chatbot-suggestions-container {
   display: flex;
   flex-wrap: wrap;
-  gap: 8px;
+  gap: 10px;
 }
 
 .chatbot-suggestion-button {
-  background-color: #2d3748;
-  color: #e2e8f0;
-  border: 1px solid #4a5568;
+  background-color: theme('colors.primary.50');
+  color: theme('colors.primary.700');
+  border: 1px solid theme('colors.primary.200');
   border-radius: 16px;
-  padding: 6px 12px;
-  font-size: 12px;
+  padding: 8px 14px;
+  font-size: 13px;
   cursor: pointer;
-  transition: all 0.2s ease;
-  white-space: nowrap;
-  text-overflow: ellipsis;
-  overflow: hidden;
-  max-width: 100%;
+  transition: all 0.2s;
+  font-weight: 500;
 }
 
 .chatbot-suggestion-button:hover {
-  background-color: #374151;
-  border-color: #6b7280;
+  background-color: theme('colors.primary.100');
+  border-color: theme('colors.primary.300');
 }
 
-/* Стили для Markdown контента */
-:deep(.prose) {
-  color: #e2e8f0;
-  font-size: 14px;
+@keyframes bounce {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  25% {
+    transform: translateY(-3px);
+  }
+  50% {
+    transform: translateY(0);
+  }
+  75% {
+    transform: translateY(3px);
+  }
 }
 
-:deep(.prose a) {
-  color: #93c5fd;
-  text-decoration: underline;
-}
-
-:deep(.prose strong) {
-  color: white;
-  font-weight: 600;
-}
-
-:deep(.prose h1),
-:deep(.prose h2),
-:deep(.prose h3) {
-  color: white;
-  margin-top: 1em;
-  margin-bottom: 0.5em;
-}
-
-:deep(.prose p) {
-  margin-top: 0.5em;
-  margin-bottom: 0.5em;
-}
-
-:deep(.prose ul),
-:deep(.prose ol) {
-  margin-top: 0.5em;
-  margin-bottom: 0.5em;
-  padding-left: 1.5em;
-}
-
-:deep(.prose li) {
-  margin-top: 0.25em;
-  margin-bottom: 0.25em;
-}
-
-:deep(.prose code) {
-  background-color: rgba(71, 85, 105, 0.5);
-  padding: 0.125rem 0.25rem;
-  border-radius: 0.25rem;
-}
-
-/* Адаптивные стили для мобильных устройств */
 @media (max-width: 640px) {
   .chatbot-window {
-    width: calc(100vw - 40px);
-    height: 450px;
+    width: calc(100% - 40px);
+    height: 500px;
     bottom: 80px;
   }
 }

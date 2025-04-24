@@ -5,34 +5,34 @@
         <!-- Навигационные кнопки (хлебные крошки) -->
         <div class="flex items-center mb-4 text-sm">
           <Link :href="route('home')" class="text-gray-400 hover:text-white transition">
-            Главная
+            Home
           </Link>
           <span class="mx-2 text-gray-500">›</span>
           <Link :href="route('manageCourses')" class="text-gray-400 hover:text-white transition">
-            Управление курсами
+            Course Management
           </Link>
           <span class="mx-2 text-gray-500">›</span>
           <Link :href="route('course.tests', { courseId: test.courses_id })" class="text-gray-400 hover:text-white transition">
-            Тесты для курса
+            Course Tests
           </Link>
           <span class="mx-2 text-gray-500">›</span>
-          <span class="text-white">Редактирование теста</span>
+          <span class="text-white">Edit Test</span>
         </div>
         
         <div class="bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
           <div class="p-6 bg-gray-800 border-b border-gray-700">
             <div class="flex justify-between items-center mb-6">
-              <h2 class="text-xl font-semibold text-white">Редактирование теста: {{ test.title }}</h2>
+              <h2 class="text-xl font-semibold text-white">Edit Test: {{ test.title }}</h2>
               <Link :href="route('course.tests', { courseId: test.courses_id })" 
                     class="px-4 py-2 bg-gray-600 text-gray-200 rounded hover:bg-gray-500 transition">
-                Назад к списку тестов
+                Back to Test List
               </Link>
             </div>
             
             <form @submit.prevent="submitForm">
               <!-- Основные данные теста -->
               <div class="mb-6">
-                <label for="title" class="block text-sm font-medium text-gray-300 mb-1">Название теста</label>
+                <label for="title" class="block text-sm font-medium text-gray-300 mb-1">Test Title</label>
                 <input type="text" id="title" v-model="form.title" 
                        class="w-full px-3 py-2 border border-gray-600 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 bg-gray-700 text-white" 
                        required />
@@ -42,18 +42,18 @@
               <!-- Секция для вопросов -->
               <div class="mb-6">
                 <div class="flex justify-between items-center mb-4">
-                  <h3 class="text-lg font-medium text-gray-300">Вопросы</h3>
+                  <h3 class="text-lg font-medium text-gray-300">Questions</h3>
                   <button type="button" @click="addQuestion" 
                           class="px-3 py-1 bg-indigo-600 text-white rounded hover:bg-indigo-700 transition">
-                    Добавить вопрос
+                    Add Question
                   </button>
                 </div>
                 
                 <div v-if="form.questions.length === 0" class="text-center py-4 bg-gray-700 rounded">
-                  <div class="text-gray-300">У теста еще нет вопросов</div>
+                  <div class="text-gray-300">No questions for this test yet</div>
                   <button type="button" @click="addQuestion" 
                           class="mt-2 px-3 py-1 bg-indigo-600 text-white rounded hover:bg-indigo-700 transition">
-                    Добавить первый вопрос
+                    Add First Question
                   </button>
                 </div>
                 
@@ -62,7 +62,7 @@
                   <div class="flex justify-between items-start mb-4">
                     <div class="w-full">
                       <label :for="'question-'+qIndex" class="block text-sm font-medium text-gray-300 mb-1">
-                        Текст вопроса {{ qIndex + 1 }}
+                        Question {{ qIndex + 1 }}
                       </label>
                       <input type="text" :id="'question-'+qIndex" v-model="question.name" 
                             class="w-full px-3 py-2 border border-gray-600 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 bg-gray-700 text-white" 
@@ -77,15 +77,15 @@
                   <!-- Ответы на вопрос -->
                   <div class="ml-4">
                     <div class="flex justify-between items-center mb-2">
-                      <h4 class="text-sm font-medium text-gray-300">Варианты ответов</h4>
+                      <h4 class="text-sm font-medium text-gray-300">Answer Options</h4>
                       <button type="button" @click="addAnswer(qIndex)" 
                               class="px-2 py-1 text-xs bg-indigo-600 text-white rounded hover:bg-indigo-700 transition">
-                        Добавить ответ
+                        Add Answer
                       </button>
                     </div>
                     
                     <div v-if="question.answers.length === 0" class="text-center py-3 bg-gray-600 rounded text-sm">
-                      <div class="text-gray-300">Добавьте варианты ответов</div>
+                      <div class="text-gray-300">Add answer options</div>
                     </div>
                     
                     <div v-for="(answer, aIndex) in question.answers" :key="aIndex" 
@@ -114,7 +114,7 @@
                 <button type="submit" 
                         class="px-4 py-2 bg-indigo-600 text-white rounded hover:bg-indigo-700 transition"
                         :disabled="form.processing">
-                  Сохранить изменения
+                  Save Changes
                 </button>
               </div>
             </form>
@@ -210,28 +210,28 @@ const submitForm = () => {
   let isValid = true;
   
   if (form.questions.length === 0) {
-    alert('Добавьте хотя бы один вопрос');
+    alert('Please add at least one question');
     isValid = false;
     return;
   }
   
   for (let i = 0; i < form.questions.length; i++) {
     if (form.questions[i].answers.length < 2) {
-      alert(`Вопрос ${i+1} должен иметь как минимум 2 варианта ответа`);
+      alert(`Question ${i+1} must have at least 2 answer options`);
       isValid = false;
       return;
     }
     
     const hasCorrectAnswer = form.questions[i].answers.some(answer => answer.is_valid);
     if (!hasCorrectAnswer) {
-      alert(`Вопрос ${i+1} должен иметь хотя бы один правильный ответ`);
+      alert(`Question ${i+1} must have at least one correct answer`);
       isValid = false;
       return;
     }
   }
   
   if (isValid) {
-    console.log('Отправка формы редактирования:', form);
+    console.log('Submitting edit form:', form);
     form.put(route('tests.update', { id: props.test.id }), {
       onSuccess: (page) => {
         if (page.props.flash.success) {

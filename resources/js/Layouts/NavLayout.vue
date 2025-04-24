@@ -3,7 +3,6 @@ import { ref, onMounted } from "vue";
 import { usePage, Link } from "@inertiajs/vue3";
 import SideNavItem from "../Components/SideNavItem.vue";
 import MenuIcon from "@/Components/Icons/MenuIcon.vue";
-import MagnifyIcon from "@/Components/Icons/MagnifyIcon.vue";
 import Dropdown from "@/Components/Dropdown.vue";
 import DropdownLink from "@/Components/DropdownLink.vue";
 
@@ -41,121 +40,111 @@ const isNavOverlay = () => {
 </script>
 
 <template>
-    <div class="relative">
+    <div class="relative bg-surface-50 min-h-screen">
+        <!-- Horizontal navigation -->
         <div
             id="TopNav"
-            class="w-[100%] h-[60px] fixed bg-slate-700 z-20 flex items-center justify-between"
+            class="w-full h-[70px] fixed bg-gradient-to-r from-primary-600 to-primary-800 z-20 flex items-center justify-between px-6 shadow-md"
         >
             <div class="flex items-center">
                 <button
                     @click="isNavOverlay()"
-                    class="p-2 ml-3 rounded-full hover:bg-gray-900 inline-block cursor-pointer"
+                    class="p-2 rounded-full hover:bg-primary-700 inline-block cursor-pointer mr-3 lg:hidden transition-colors"
                 >
                     <MenuIcon fillColor="#FFFFFF" :size="26" />
                 </button>
-                <div class="mx-2"></div>
                 <Link
                     :href="route('home')"
-                    class="flex items-center justify-center mr-10 cursor-pointer"
+                    class="flex items-center justify-center cursor-pointer"
                 >
-                    <img width="130" src="/images/logo.png" alt="" />
+                    <div class="font-bold text-2xl text-white flex items-center">
+                        <span class="mr-1">Yeldos</span>
+                        <span class="text-primary-200">Courses</span>
+                    </div>
                 </Link>
             </div>
 
-            <div class="w-[600px] md:block hidden">
-                <div class="rounded-full flex items-center bg-[#222222]">
-                    <input
-                        type="text"
-                        class="form-control block w-full px-5 py-1.5 text-base font-normal text-gray-200 bg-black placeholder-gray-400 bg-clip-padding border border-solid border-l-gray-700 border-y-gray-700 rounded-l-full transition ease-in-out m-0 border-transparent focus:ring-0"
-                        placeholder="Search Course..."
-                    />
-                    <MagnifyIcon class="mx-6" fillColor="#FFFFFF" :size="23" />
+            <div class="flex items-center">
+                <!-- Навигационные ссылки в десктопной версии -->
+                <div class="hidden md:flex items-center space-x-6 mr-8">
+                    <Link :href="route('home')" class="text-white hover:text-primary-200 transition-colors font-medium">
+                        Home
+                    </Link>
+                    <Link :href="route('student.tests')" class="text-white hover:text-primary-200 transition-colors font-medium">
+                        Tests
+                    </Link>
+                    <Link v-if="$page.props.auth.user.role == 'admin'" :href="route('manageCourses')" class="text-white hover:text-primary-200 transition-colors font-medium">
+                        Manage
+                    </Link>
                 </div>
-            </div>
-            <Dropdown align="right" width="48">
-                <template #trigger>
-                    <span class="inline-flex rounded-md">
-                        <button
-                            type="button"
-                            class="inline-flex items-center px-3 border border-transparent text-sm leading-4 font-medium rounded-md text-white bg-slate-700 hover:text-gray-300 focus:outline-none transition ease-in-out duration-150"
+                
+                <!-- User dropdown menu -->
+                <Dropdown align="right" width="48">
+                    <template #trigger>
+                        <button 
+                            class="flex items-center text-white bg-primary-700 hover:bg-primary-800 transition-colors rounded-full py-1.5 pl-3 pr-2"
                         >
-                            {{ $page.props.auth.user.name }}
-
-                            <div>
-                                <img
-                                    v-if="$page.props.auth.user.role != 'admin'"
-                                    class="rounded-full ml-2"
-                                    width="35"
-                                    src="/images/astronaut.png"
-                                />
-                                <img
-                                    v-else
-                                    class="rounded-full ml-2 bg-slate-400"
-                                    width="35"
-                                    src="/images/admin.png"
-                                />
+                            <span class="mr-2 font-medium">{{ $page.props.auth.user.name }}</span>
+                            <div class="w-8 h-8 rounded-full bg-primary-200 text-primary-800 flex items-center justify-center uppercase font-bold">
+                                {{ $page.props.auth.user.name.charAt(0) }}
                             </div>
                         </button>
-                    </span>
-                </template>
+                    </template>
 
-                <template #content>
-                    <DropdownLink :href="route('profile.edit')">
-                        Profile
-                    </DropdownLink>
-                    <DropdownLink
-                        :href="route('logout')"
-                        method="post"
-                        as="button"
-                    >
-                        Log Out
-                    </DropdownLink>
-                </template>
-            </Dropdown>
+                    <template #content>
+                        <DropdownLink :href="route('profile.edit')">
+                            Profile
+                        </DropdownLink>
+                        <DropdownLink :href="route('logout')" method="post" as="button">
+                            Log Out
+                        </DropdownLink>
+                    </template>
+                </Dropdown>
+            </div>
         </div>
 
-        <div v-if="width > 639">
+        <!-- Side navigation (visible on large screens) -->
+        <div class="hidden lg:block fixed top-0 left-0 h-full z-10">
             <div
                 id="SideNav"
-                :class="[!openSideNav ? 'w-[70px]' : 'w-[240px]']"
-                class="h-[100%] fixed z-0 bg-slate-800"
+                class="h-full w-[240px] bg-white shadow-md"
             >
-                <ul
-                    :class="[!openSideNav ? 'p-2' : 'px-5 pb-2 pt-[7px]']"
-                    class="mt-[60px] w-full"
-                >
+                <div class="h-[70px] flex items-center justify-center bg-primary-50">
+                    <div class="font-bold text-xl text-primary-600">Yeldos<span class="text-primary-400">Courses</span></div>
+                </div>
+                <ul class="mt-6 p-4 space-y-2">
                     <Link :href="route('home')">
                         <SideNavItem
-                            :openSideNav="openSideNav"
+                            :openSideNav="true"
                             iconString="Home"
                         />
                     </Link>
 
-                    <div v-if="$page.props.auth.user.role == 'admin'">
-                        <div class="border-b border-slate-700 my-2.5"></div>
+                    <div v-if="$page.props.auth.user.role == 'admin'" class="pt-2">
+                        <div class="border-b border-primary-100 my-3"></div>
                         <Link :href="route('addCourse')">
                             <SideNavItem
-                                :openSideNav="openSideNav"
+                                :openSideNav="true"
                                 iconString="Create Course"
                             />
                         </Link>
                         <Link :href="route('manageCourses')">
                             <SideNavItem
-                                :openSideNav="openSideNav"
+                                :openSideNav="true"
                                 iconString="Manage Courses"
                             />
                         </Link>
                         <Link :href="route('manageStudents')">
                             <SideNavItem
-                                :openSideNav="openSideNav"
+                                :openSideNav="true"
                                 iconString="Manage Students"
                             />
                         </Link>
                     </div>
-                    <div class="border-b border-slate-700 my-2.5"></div>
+                    <div class="border-b border-primary-100 my-3"></div>
                     <Link :href="route('student.tests')">
                         <SideNavItem
-                            :openSideNav="openSideNav"
+                            :openSideNav="true"
                             iconString="Tests"
                         />
                     </Link>
@@ -163,10 +152,10 @@ const isNavOverlay = () => {
             </div>
         </div>
 
-        <!-- OVERLAY NAV SECTION -->
+        <!-- Mobile menu -->
         <div
             @click="openSideNavOverlay = false"
-            class="bg-slate-700 bg-opacity-70 fixed z-50 w-full h-screen"
+            class="bg-primary-800 bg-opacity-70 fixed z-50 w-full h-screen"
             :class="
                 openSideNavOverlay
                     ? 'animate__animated animate__fadeIn animate__faster'
@@ -176,39 +165,40 @@ const isNavOverlay = () => {
         <div
             id="SideNavOverlay"
             ref="sideNavOverlay"
-            class="h-[100%] fixed z-50 bg-slate-700 mt-[9px] w-[240px]"
+            class="h-full fixed z-50 bg-white shadow-lg mt-[9px] w-[280px]"
             :class="
                 openSideNavOverlay
                     ? 'animate__animated animate__slideInLeft animate__faster'
                     : 'animate__animated animate__slideOutLeft animate__faster'
             "
         >
-            <div class="flex items-center">
+            <div class="flex items-center p-4 border-b border-primary-100">
                 <button
                     @click="isNavOverlay()"
-                    class="p-2 ml-3 rounded-full hover:bg-gray-800 cursor-pointer"
+                    class="p-2 rounded-full hover:bg-primary-100 cursor-pointer mr-3 transition-colors"
                 >
-                    <MenuIcon fillColor="#FFFFFF" :size="26" />
+                    <MenuIcon fillColor="#4338CA" :size="26" />
                 </button>
-                <div class="mx-2"></div>
                 <Link
                     :href="route('home')"
                     class="flex items-center justify-center cursor-pointer"
                 >
-                    <img width="130" src="/images/logo.png" alt="" />
+                    <div class="font-bold text-xl text-primary-700">Yeldos<span class="text-primary-500">Courses</span></div>
                 </Link>
             </div>
-            <ul class="w-full px-5 py-2 p-2 mt-2">
+            
+            <ul class="p-4 space-y-1">
                 <Link :href="route('home')">
                     <SideNavItem :openSideNav="true" iconString="Home" />
                 </Link>
                 <div v-if="$page.props.auth.user.role == 'admin'">
-                    <div class="border-b border-slate-600 my-2.5"></div>
-                    <Link :href="route('addCourse')"
-                        ><SideNavItem
+                    <div class="border-b border-primary-100 my-3"></div>
+                    <Link :href="route('addCourse')">
+                        <SideNavItem
                             :openSideNav="true"
                             iconString="Create Course"
-                    /></Link>
+                        />
+                    </Link>
                     <Link :href="route('manageCourses')">
                         <SideNavItem
                             :openSideNav="true"
@@ -222,36 +212,23 @@ const isNavOverlay = () => {
                         />
                     </Link>
                 </div>
-                <div class="border-b border-slate-600 my-2.5"></div>
-                <Link :href="route('home')">
-                    <SideNavItem :openSideNav="true" iconString="Courses" />
-                </Link>
+                <div class="border-b border-primary-100 my-3"></div>
                 <Link :href="route('student.tests')">
                     <SideNavItem
                         :openSideNav="true"
                         iconString="Tests"
                     />
                 </Link>
-                <SideNavItem :openSideNav="true" iconString="My Library" />
             </ul>
         </div>
-        <!-- OVERLAY NAV SECTION END -->
 
+        <!-- Main content -->
         <div
-            class="w-[100%] h-[calc(100vh-60px)] absolute right-0 top-[60px]"
-            :class="{
-                'w-[calc(100%-70px)]': !openSideNav,
-                'w-[calc(100%-240px)]': openSideNav,
-                'w-[100vw]': width < 639,
-            }"
+            class="pt-[70px] lg:pl-[240px]"
         >
-            <slot />
+            <div class="max-w-7xl mx-auto p-4">
+                <slot />
+            </div>
         </div>
     </div>
 </template>
-
-<style>
-body {
-    background-color: black;
-}
-</style>

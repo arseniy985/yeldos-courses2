@@ -1,276 +1,289 @@
 <template>
   <NavLayout>
-    <div class="py-12">
-      <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-        <!-- Навигационные кнопки (хлебные крошки) -->
-        <div class="flex items-center mb-4 text-sm">
-          <Link :href="route('home')" class="text-gray-400 hover:text-white transition">
-            Главная
+    <main class="container mx-auto py-8">
+      <!-- Page header -->
+      <div class="bg-white rounded-xl shadow-md p-6 mb-8">
+        <div class="flex items-center">
+          <svg class="w-8 h-8 text-primary-600 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"></path>
+          </svg>
+          <h1 class="text-2xl font-bold text-primary-900">Test Result</h1>
+        </div>
+      </div>
+
+      <!-- Breadcrumb navigation -->
+      <div class="bg-white rounded-xl shadow-md p-4 mb-8">
+        <div class="flex items-center text-sm">
+          <Link :href="route('home')" class="text-primary-600 hover:text-primary-800 transition">
+            Home
           </Link>
-          <span class="mx-2 text-gray-500">›</span>
-          <Link v-if="result.test.course" :href="route('course.show', { id: result.test.course.id })" class="text-gray-400 hover:text-white transition">
+          <span class="mx-2 text-primary-400">›</span>
+          <Link v-if="result.test.course" :href="route('course.show', { id: result.test.course.id })" class="text-primary-600 hover:text-primary-800 transition">
             {{ result.test.course.title }}
           </Link>
-          <span class="mx-2 text-gray-500">›</span>
-          <Link :href="route('student.tests')" class="text-gray-400 hover:text-white transition">
-            Все тесты
+          <span class="mx-2 text-primary-400">›</span>
+          <Link :href="route('student.tests')" class="text-primary-600 hover:text-primary-800 transition">
+            All Tests
           </Link>
-          <span class="mx-2 text-gray-500">›</span>
-          <Link :href="route('student.test.take', { id: result.test_id })" class="text-gray-400 hover:text-white transition">
+          <span class="mx-2 text-primary-400">›</span>
+          <Link :href="route('student.test.take', { id: result.test_id })" class="text-primary-600 hover:text-primary-800 transition">
             {{ result.test.title }}
           </Link>
-          <span class="mx-2 text-gray-500">›</span>
-          <span class="text-white">Результаты</span>
+          <span class="mx-2 text-primary-400">›</span>
+          <span class="text-primary-900 font-medium">Results</span>
         </div>
+      </div>
 
-        <div class="bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
-          <div class="p-6 bg-gray-800 border-b border-gray-700">
-            <!-- Заголовок и основная информация о результате -->
-            <div class="mb-8">
-              <div class="flex justify-between items-center mb-4">
-                <h2 class="text-xl font-semibold text-white">Результат теста: {{ result.test.title }}</h2>
-                <div
-                  :class="result.passed ? 'bg-green-600' : 'bg-red-600'"
-                  class="px-4 py-2 rounded-lg text-white font-medium"
-                >
-                  {{ result.passed ? 'Тест пройден' : 'Тест не пройден' }}
-                </div>
+      <!-- Main content -->
+      <div class="bg-white rounded-xl shadow-md overflow-hidden">
+        <div class="p-6 border-b border-primary-100">
+          <!-- Header and main result information -->
+          <div class="mb-8">
+            <div class="flex justify-between items-center mb-4">
+              <h2 class="text-xl font-semibold text-primary-900">Test Result: {{ result.test.title }}</h2>
+              <div
+                :class="result.passed ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'"
+                class="px-4 py-2 rounded-lg font-medium"
+              >
+                {{ result.passed ? 'Test Passed' : 'Test Failed' }}
+              </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+              <div class="bg-primary-50 p-4 rounded-lg text-center border border-primary-100">
+                <div class="text-sm text-primary-600 mb-1">Overall Result</div>
+                <div class="text-2xl font-bold text-primary-900">{{ result.percentage }}%</div>
               </div>
 
-              <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-                <div class="bg-gray-700 p-4 rounded-lg text-center">
-                  <div class="text-sm text-gray-300 mb-1">Общий результат</div>
-                  <div class="text-2xl font-bold text-white">{{ result.percentage }}%</div>
+              <div class="bg-primary-50 p-4 rounded-lg text-center border border-primary-100">
+                <div class="text-sm text-primary-600 mb-1">Correct Answers</div>
+                <div class="text-2xl font-bold text-primary-900">{{ result.correct_answers }} of {{ result.total_questions }}</div>
+              </div>
+
+              <div class="bg-primary-50 p-4 rounded-lg text-center border border-primary-100">
+                <div class="text-sm text-primary-600 mb-1">Completion Date</div>
+                <div class="text-lg font-medium text-primary-900">
+                  {{ new Date(result.created_at).toLocaleDateString() }}
+                  {{ new Date(result.created_at).toLocaleTimeString() }}
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Detailed list of questions and answers -->
+          <div>
+            <h3 class="text-lg font-medium text-primary-900 mb-4">Detailed Results</h3>
+
+            <div v-if="parsedAnswers && parsedAnswers.length > 0" class="space-y-6">
+              <div
+                v-for="(answer, index) in parsedAnswers"
+                :key="index"
+                class="bg-primary-50 p-5 rounded-lg border border-primary-100"
+              >
+                <div class="flex justify-between items-start mb-4">
+                  <h4 class="text-primary-900 text-lg font-medium">
+                    {{ index + 1 }}. {{ answer.question_text }}
+                  </h4>
+                  <div
+                    :class="answer.is_correct ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'"
+                    class="px-3 py-1 rounded-full text-xs font-medium"
+                  >
+                    {{ answer.is_correct ? 'Correct' : 'Incorrect' }}
+                  </div>
                 </div>
 
-                <div class="bg-gray-700 p-4 rounded-lg text-center">
-                  <div class="text-sm text-gray-300 mb-1">Правильных ответов</div>
-                  <div class="text-2xl font-bold text-white">{{ result.correct_answers }} из {{ result.total_questions }}</div>
+                <div class="text-primary-700">
+                  <div class="font-medium mb-1">Your answer:</div>
+                  <div class="pl-4 border-l-2 border-primary-200 ml-2">
+                    {{ answer.answer_text }}
+                  </div>
                 </div>
 
-                <div class="bg-gray-700 p-4 rounded-lg text-center">
-                  <div class="text-sm text-gray-300 mb-1">Дата прохождения</div>
-                  <div class="text-lg font-medium text-white">
-                    {{ new Date(result.created_at).toLocaleDateString() }}
-                    {{ new Date(result.created_at).toLocaleTimeString() }}
+                <div v-if="!answer.is_correct && correctAnswers[answer.question_id]" class="text-primary-700 mt-4">
+                  <div class="font-medium mb-1 text-green-600">Correct answer:</div>
+                  <div class="pl-4 border-l-2 border-green-300 ml-2">
+                    {{ correctAnswers[answer.question_id] }}
                   </div>
                 </div>
               </div>
             </div>
 
-            <!-- Детальный список вопросов и ответов -->
-            <div>
-              <h3 class="text-lg font-medium text-white mb-4">Детальные результаты</h3>
+            <div v-else class="text-center py-8 text-primary-600">
+              Detailed information about your answers is unavailable
+            </div>
+          </div>
 
-              <div v-if="parsedAnswers && parsedAnswers.length > 0" class="space-y-6">
-                <div
-                  v-for="(answer, index) in parsedAnswers"
-                  :key="index"
-                  class="bg-gray-700 p-5 rounded-lg"
-                >
-                  <div class="flex justify-between items-start mb-4">
-                    <h4 class="text-white text-lg font-medium">
-                      {{ index + 1 }}. {{ answer.question_text }}
-                    </h4>
-                    <div
-                      :class="answer.is_correct ? 'bg-green-600' : 'bg-red-600'"
-                      class="px-3 py-1 rounded-full text-xs text-white font-medium"
-                    >
-                      {{ answer.is_correct ? 'Верно' : 'Неверно' }}
-                    </div>
-                  </div>
-
-                  <div class="text-gray-300">
-                    <div class="font-medium mb-1">Ваш ответ:</div>
-                    <div class="pl-4 border-l-2 border-gray-600 ml-2">
-                      {{ answer.answer_text }}
-                    </div>
-                  </div>
-
-                  <div v-if="!answer.is_correct && correctAnswers[answer.question_id]" class="text-gray-300 mt-4">
-                    <div class="font-medium mb-1 text-green-400">Правильный ответ:</div>
-                    <div class="pl-4 border-l-2 border-green-600 ml-2">
-                      {{ correctAnswers[answer.question_id] }}
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <div v-else class="text-center py-8 text-gray-300">
-                Детальная информация о ваших ответах недоступна
+          <!-- Neural network analytics -->
+          <div class="mt-10">
+            <h3 class="text-lg font-medium text-primary-900 mb-4">Result Analysis</h3>
+            
+            <div v-if="loading" class="bg-primary-50 p-6 rounded-lg flex items-center justify-center border border-primary-100">
+              <div class="flex items-center">
+                <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-primary-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                  <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                  <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+                <span class="text-primary-600">Loading results analysis...</span>
               </div>
             </div>
 
-            <!-- Аналитика от нейросети -->
-            <div class="mt-10">
-              <div v-if="loading" class="bg-gray-700 p-6 rounded-lg flex items-center justify-center">
-                <div class="flex items-center">
-                  <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                  </svg>
-                  <span class="text-gray-300">Загружаем анализ результатов...</span>
-                </div>
-              </div>
+            <div v-else-if="error" class="bg-red-50 border border-red-200 p-5 rounded-lg">
+              <div class="text-red-600 mb-4">{{ error }}</div>
+              <button
+                @click="loadAnalytics"
+                class="px-4 py-2 bg-primary-600 text-white rounded hover:bg-primary-700 transition"
+              >
+                Try again
+              </button>
+            </div>
 
-              <div v-else-if="error" class="bg-red-900 bg-opacity-30 border border-red-700 p-5 rounded-lg">
-                <div class="text-red-300 mb-4">{{ error }}</div>
-                <button
-                  @click="loadAnalytics"
-                  class="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700 transition"
-                >
-                  Попробовать еще раз
-                </button>
-              </div>
-
-              <div v-else-if="analyticsData" class="bg-gray-700 p-6 rounded-lg overflow-auto">
-                <div class="prose prose-invert max-w-none" v-html="renderMarkdown(analyticsData)"></div>
-              </div>
-              
-              <div v-else class="bg-gray-700 p-6 rounded-lg text-center text-gray-300">
-                Аналитика по результатам теста недоступна
-              </div>
+            <div v-else-if="analyticsData" class="bg-primary-50 p-6 rounded-lg overflow-auto border border-primary-100">
+              <div class="prose max-w-none" v-html="renderMarkdown(analyticsData)"></div>
             </div>
             
-            <!-- Чат-бот для помощи с анализом результатов -->
-            <div class="mt-10">
-              <h3 class="text-lg font-medium text-white mb-4">Задайте вопрос о результатах теста</h3>
-              
-              <!-- Открывающая кнопка для чата на мобильных устройствах -->
-              <button 
-                @click="toggleChatbot" 
-                class="md:hidden mb-4 w-full py-2 px-4 bg-indigo-600 text-white rounded-lg shadow-lg hover:bg-indigo-700 transition flex items-center justify-center"
-              >
-                <span v-if="!isChatbotVisible">Показать помощника по результатам</span>
-                <span v-else>Скрыть помощника</span>
-              </button>
-              
-              <div 
-                class="bg-gray-700 rounded-lg shadow-lg overflow-hidden"
-                :class="{'hidden md:block': !isChatbotVisible}"
-              >
-                <!-- Заголовок чата -->
-                <div class="bg-gray-800 p-4 flex justify-between items-center border-b border-gray-600">
-                  <div class="flex items-center">
-                    <div class="bg-indigo-500 h-8 w-8 rounded-full flex items-center justify-center mr-3">
-                      <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-white" viewBox="0 0 20 20" fill="currentColor">
-                        <path fill-rule="evenodd" d="M10 2a8 8 0 100 16 8 8 0 000-16zm0 14a6 6 0 110-12 6 6 0 010 12zm0-8a1 1 0 00-1 1v3a1 1 0 002 0V9a1 1 0 00-1-1zm0-2a1 1 0 100-2 1 1 0 000 2z" clip-rule="evenodd" />
-                      </svg>
-                    </div>
-                    <div>
-                      <h4 class="text-white font-medium">Помощник по результатам</h4>
-                      <p class="text-gray-400 text-xs">Задайте вопрос о вашем тесте</p>
-                    </div>
-                  </div>
-                  <button @click="toggleChatbot" class="md:hidden text-gray-400 hover:text-white">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                      <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" />
+            <div v-else class="bg-primary-50 p-6 rounded-lg text-center text-primary-600 border border-primary-100">
+              Analytics for test results is unavailable
+            </div>
+          </div>
+          
+          <!-- Chatbot for help with results analysis -->
+          <div class="mt-10">
+            <h3 class="text-lg font-medium text-primary-900 mb-4">Ask a question about your test results</h3>
+            
+            <!-- Opening button for chat on mobile devices -->
+            <button 
+              @click="toggleChatbot" 
+              class="md:hidden mb-4 w-full py-2 px-4 bg-primary-600 text-white rounded-lg shadow-lg hover:bg-primary-700 transition flex items-center justify-center"
+            >
+              <span v-if="!isChatbotVisible">Show Results Assistant</span>
+              <span v-else>Hide Assistant</span>
+            </button>
+            
+            <div 
+              class="bg-primary-50 rounded-lg shadow-lg overflow-hidden border border-primary-100"
+              :class="{'hidden md:block': !isChatbotVisible}"
+            >
+              <!-- Chat header -->
+              <div class="bg-primary-100 p-4 flex justify-between items-center border-b border-primary-200">
+                <div class="flex items-center">
+                  <div class="bg-primary-500 h-8 w-8 rounded-full flex items-center justify-center mr-3">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-white" viewBox="0 0 20 20" fill="currentColor">
+                      <path fill-rule="evenodd" d="M10 2a8 8 0 100 16 8 8 0 000-16zm0 14a6 6 0 110-12 6 6 0 010 12zm0-8a1 1 0 00-1 1v3a1 1 0 002 0V9a1 1 0 00-1-1zm0-2a1 1 0 100-2 1 1 0 000 2z" clip-rule="evenodd" />
                     </svg>
-                  </button>
-                </div>
-                
-                <!-- История сообщений -->
-                <div class="p-4 h-80 overflow-y-auto" ref="chatHistory">
-                  <!-- Сообщение с подсказкой -->
-                  <div v-if="chatMessages.length === 0" class="text-center text-gray-400 py-8">
-                    <p>Задайте вопрос по результатам вашего теста, например:</p>
-                    <div class="my-3 space-y-2">
-                      <button 
-                        @click="askQuestion('Почему я сделал ошибку в вопросе о SQL?')"
-                        class="bg-gray-600 text-gray-200 px-3 py-1 rounded-lg text-sm hover:bg-gray-500 transition block w-full"
-                      >
-                        Почему я сделал ошибку в вопросе о SQL?
-                      </button>
-                      <button 
-                        @click="askQuestion('Как мне улучшить мои знания в этой теме?')"
-                        class="bg-gray-600 text-gray-200 px-3 py-1 rounded-lg text-sm hover:bg-gray-500 transition block w-full"
-                      >
-                        Как мне улучшить мои знания в этой теме?
-                      </button>
-                      <button 
-                        @click="askQuestion('Объясни подробнее мои ошибки')"
-                        class="bg-gray-600 text-gray-200 px-3 py-1 rounded-lg text-sm hover:bg-gray-500 transition block w-full"
-                      >
-                        Объясни подробнее мои ошибки
-                      </button>
-                    </div>
                   </div>
-                  
-                  <!-- Сообщения чата -->
-                  <div v-for="(message, index) in chatMessages" :key="index" class="mb-4">
-                    <div 
-                      :class="message.isUser ? 'bg-indigo-600 text-white ml-auto' : 'bg-gray-600 text-gray-200 mr-auto'" 
-                      class="px-4 py-3 rounded-lg max-w-3/4 inline-block"
-                    >
-                      <div v-if="message.isUser">
-                        {{ message.text }}
-                      </div>
-                      <div v-else class="prose prose-invert prose-sm max-w-none break-words" v-html="renderMarkdown(message.text)"></div>
-                    </div>
-                    <div 
-                      :class="message.isUser ? 'text-right' : 'text-left'" 
-                      class="text-gray-400 text-xs mt-1"
-                    >
-                      {{ message.isUser ? 'Вы' : 'Помощник' }} • {{ formatTime(message.timestamp) }}
-                    </div>
-                  </div>
-                  
-                  <!-- Индикатор загрузки -->
-                  <div v-if="isChatLoading" class="flex items-center space-x-2 mb-4">
-                    <div class="bg-gray-600 text-gray-200 px-4 py-3 rounded-lg mr-auto inline-block">
-                      <div class="flex items-center">
-                        <span class="h-2 w-2 bg-gray-300 rounded-full animate-bounce"></span>
-                        <span class="h-2 w-2 mx-1 bg-gray-300 rounded-full animate-bounce" style="animation-delay: 0.2s"></span>
-                        <span class="h-2 w-2 bg-gray-300 rounded-full animate-bounce" style="animation-delay: 0.4s"></span>
-                      </div>
-                    </div>
+                  <div>
+                    <h4 class="text-primary-900 font-medium">Results Assistant</h4>
+                    <p class="text-primary-600 text-xs">Ask a question about your test</p>
                   </div>
                 </div>
-                
-                <!-- Форма для отправки сообщений -->
-                <div class="border-t border-gray-600 p-4">
-                  <form @submit.prevent="sendMessage" class="flex space-x-2">
-                    <input 
-                      v-model="userMessage" 
-                      type="text" 
-                      placeholder="Задайте вопрос о результатах теста..." 
-                      class="flex-1 bg-gray-800 border border-gray-600 rounded-lg px-4 py-2 text-white focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                      :disabled="isChatLoading"
-                    />
+                <button @click="toggleChatbot" class="md:hidden text-primary-600 hover:text-primary-800">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" />
+                  </svg>
+                </button>
+              </div>
+              
+              <!-- Message history -->
+              <div class="p-4 h-80 overflow-y-auto bg-white" ref="chatHistory">
+                <!-- Hint message -->
+                <div v-if="chatMessages.length === 0" class="text-center text-primary-600 py-8">
+                  <p>Ask a question about your test results, for example:</p>
+                  <div class="my-3 space-y-2">
                     <button 
-                      type="submit" 
-                      class="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 transition-colors focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                      :disabled="isChatLoading || !userMessage.trim()"
+                      @click="askQuestion('Why did I make a mistake in the SQL question?')"
+                      class="bg-primary-50 text-primary-800 px-3 py-1 rounded-lg text-sm hover:bg-primary-100 transition block w-full"
                     >
-                      <svg v-if="!isChatLoading" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                        <path d="M10.894 2.553a1 1 0 00-1.788 0l-7 14a1 1 0 001.169 1.409l5-1.429A1 1 0 009 15.571V11a1 1 0 112 0v4.571a1 1 0 00.725.962l5 1.428a1 1 0 001.17-1.408l-7-14z" />
-                      </svg>
-                      <svg v-else class="animate-spin h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                      </svg>
+                      Why did I make a mistake in the SQL question?
                     </button>
-                  </form>
+                    <button 
+                      @click="askQuestion('How can I improve my knowledge on this topic?')"
+                      class="bg-primary-50 text-primary-800 px-3 py-1 rounded-lg text-sm hover:bg-primary-100 transition block w-full"
+                    >
+                      How can I improve my knowledge on this topic?
+                    </button>
+                    <button 
+                      @click="askQuestion('Explain my mistakes in detail')"
+                      class="bg-primary-50 text-primary-800 px-3 py-1 rounded-lg text-sm hover:bg-primary-100 transition block w-full"
+                    >
+                      Explain my mistakes in detail
+                    </button>
+                  </div>
+                </div>
+                
+                <!-- Chat messages -->
+                <div v-for="(message, index) in chatMessages" :key="index" class="mb-4">
+                  <div 
+                    :class="message.isUser ? 'bg-primary-600 text-white ml-auto' : 'bg-primary-100 text-primary-800 mr-auto'" 
+                    class="px-4 py-3 rounded-lg max-w-3/4 inline-block"
+                  >
+                    <div v-if="message.isUser">
+                      {{ message.text }}
+                    </div>
+                    <div v-else class="prose prose-sm max-w-none break-words" v-html="renderMarkdown(message.text)"></div>
+                  </div>
+                  <div 
+                    :class="message.isUser ? 'text-right' : 'text-left'" 
+                    class="text-primary-500 text-xs mt-1"
+                  >
+                    {{ message.isUser ? 'You' : 'Assistant' }} • {{ formatTime(message.timestamp) }}
+                  </div>
+                </div>
+                
+                <!-- Loading indicator -->
+                <div v-if="isChatLoading" class="flex items-center space-x-2 mb-4">
+                  <div class="bg-primary-100 text-primary-800 px-4 py-3 rounded-lg mr-auto inline-block">
+                    <div class="flex items-center">
+                      <span class="h-2 w-2 bg-primary-400 rounded-full animate-bounce"></span>
+                      <span class="h-2 w-2 mx-1 bg-primary-400 rounded-full animate-bounce" style="animation-delay: 0.2s"></span>
+                      <span class="h-2 w-2 bg-primary-400 rounded-full animate-bounce" style="animation-delay: 0.4s"></span>
+                    </div>
+                  </div>
                 </div>
               </div>
+              
+              <!-- Message form -->
+              <div class="border-t border-primary-200 p-4 bg-white">
+                <form @submit.prevent="sendMessage" class="flex space-x-2">
+                  <input 
+                    v-model="userMessage" 
+                    type="text" 
+                    placeholder="Ask a question about your test results..." 
+                    class="flex-1 bg-primary-50 border border-primary-200 rounded-lg px-4 py-2 text-primary-900 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-300"
+                    :disabled="isChatLoading"
+                  />
+                  <button 
+                    type="submit" 
+                    class="bg-primary-600 text-white px-4 py-2 rounded-lg hover:bg-primary-700 transition-colors focus:outline-none focus:ring-2 focus:ring-primary-500"
+                    :disabled="isChatLoading || !userMessage.trim()"
+                  >
+                    <svg v-if="!isChatLoading" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                      <path d="M10.894 2.553a1 1 0 00-1.788 0l-7 14a1 1 0 001.169 1.409l5-1.429A1 1 0 009 15.571V11a1 1 0 112 0v4.571a1 1 0 00.725.962l5 1.428a1 1 0 001.17-1.408l-7-14z" />
+                    </svg>
+                    <svg v-else class="animate-spin h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                      <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                      <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                  </button>
+                </form>
+              </div>
             </div>
+          </div>
 
-            <!-- Кнопки навигации -->
-            <div class="mt-8 flex justify-between">
-              <Link :href="route('student.tests')"
-                    class="px-4 py-2 bg-gray-600 text-gray-200 rounded hover:bg-gray-500 transition">
-                К списку тестов
-              </Link>
+          <!-- Navigation buttons -->
+          <div class="mt-8 flex justify-between">
+            <Link :href="route('student.tests')"
+                  class="px-4 py-2 bg-primary-100 text-primary-800 rounded-lg hover:bg-primary-200 transition">
+              Back to Tests List
+            </Link>
 
-              <Link :href="route('student.test.take', { id: result.test_id })"
-                    class="px-4 py-2 bg-indigo-600 text-white rounded hover:bg-indigo-700 transition">
-                Пройти тест снова
-              </Link>
-            </div>
+            <Link :href="route('student.test.take', { id: result.test_id })"
+                  class="px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition">
+              Take Test Again
+            </Link>
           </div>
         </div>
       </div>
-    </div>
+    </main>
   </NavLayout>
 </template>
 
@@ -503,13 +516,13 @@ const correctAnswers = computed(() => {
 </script>
 
 <style>
-/* Стили для Markdown-контента */
+/* Styles for Markdown content */
 .prose {
   line-height: 1.6;
   font-size: 1rem;
 }
 .prose h1, .prose h2, .prose h3, .prose h4, .prose h5, .prose h6 {
-  color: white;
+  color: #1e293b; /* primary-900 equivalent */
   margin-top: 1.5em;
   margin-bottom: 0.5em;
   font-weight: 600;
@@ -517,17 +530,17 @@ const correctAnswers = computed(() => {
 .prose h1 {
   font-size: 1.8rem;
   margin-top: 0;
-  border-bottom: 1px solid #4a5568;
+  border-bottom: 1px solid #e2e8f0; /* primary-200 equivalent */
   padding-bottom: 0.5rem;
 }
 .prose h2 {
   font-size: 1.5rem;
-  border-bottom: 1px solid #4a5568;
+  border-bottom: 1px solid #e2e8f0; /* primary-200 equivalent */
   padding-bottom: 0.25rem;
 }
 .prose h3 {
   font-size: 1.25rem;
-  color: #a3bffa; /* Light indigo for better visibility */
+  color: #3b82f6; /* blue-500 for better visibility */
   margin-top: 1.75em;
 }
 .prose p {
@@ -535,7 +548,7 @@ const correctAnswers = computed(() => {
   margin-bottom: 1em;
 }
 .prose strong, .prose b {
-  color: #ebf4ff; /* Light color for better visibility */
+  color: #1e293b; /* primary-900 equivalent */
   font-weight: 600;
 }
 .prose ul, .prose ol {
@@ -548,40 +561,40 @@ const correctAnswers = computed(() => {
   line-height: 1.5;
 }
 .prose li::marker {
-  color: #a3bffa; /* Light indigo for better visibility */
+  color: #3b82f6; /* blue-500 for better visibility */
 }
 .prose li > ul, .prose li > ol {
   margin-top: 0.5em;
   margin-bottom: 0.5em;
 }
 .prose code {
-  background-color: rgba(45, 55, 72, 0.5);
+  background-color: rgba(226, 232, 240, 0.5); /* primary-200 with opacity */
   border-radius: 0.25rem;
   padding: 0.125rem 0.25rem;
   font-family: monospace;
   font-size: 0.875em;
 }
 .prose pre {
-  background-color: #1a202c;
+  background-color: #f1f5f9; /* primary-100 equivalent */
   border-radius: 0.25rem;
   padding: 1rem;
   overflow-x: auto;
   margin: 1em 0;
 }
 .prose blockquote {
-  border-left: 4px solid #4a5568;
+  border-left: 4px solid #e2e8f0; /* primary-200 equivalent */
   padding-left: 1rem;
   font-style: italic;
   margin: 1em 0;
-  color: #a0aec0;
+  color: #64748b; /* primary-500 equivalent */
 }
 .prose a {
-  color: #90cdf4;
+  color: #3b82f6; /* blue-500 */
   text-decoration: underline;
 }
 .prose hr {
   border: 0;
-  border-top: 1px solid #4a5568;
+  border-top: 1px solid #e2e8f0; /* primary-200 equivalent */
   margin: 2em 0;
 }
 .prose table {
@@ -591,18 +604,25 @@ const correctAnswers = computed(() => {
   font-size: 0.9em;
 }
 .prose thead {
-  background-color: #2d3748;
+  background-color: #f1f5f9; /* primary-100 equivalent */
 }
 .prose th, .prose td {
-  border: 1px solid #4a5568;
+  border: 1px solid #e2e8f0; /* primary-200 equivalent */
   padding: 0.5rem;
   text-align: left;
 }
-.prose-invert {
-  color: #e2e8f0;
+
+/* Chatbot styles */
+.v-enter-active,
+.v-leave-active {
+  transition: opacity 0.3s ease;
 }
 
-/* Стили для чат-бота */
+.v-enter-from,
+.v-leave-to {
+  opacity: 0;
+}
+
 .prose-sm {
   font-size: 0.875rem;
 }

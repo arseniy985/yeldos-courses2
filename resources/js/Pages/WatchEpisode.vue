@@ -23,104 +23,87 @@ const trimLongText = (string, length) => {
 </script>
 
 <template>
-    <Head title="Watch" />
+    <Head title="Watch Episode" />
     <NavLayout>
         <main class="container mx-auto py-8">
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-                <div
-                    class="md:col-span-3 bg-gray-800 rounded-lg p-6 flex justify-center items-center"
-                >
+            <!-- Page header -->
+            <div class="bg-white rounded-xl shadow-md p-6 mb-8">
+                <div class="flex items-center">
+                    <svg class="w-8 h-8 text-primary-600 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"></path>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                    <h1 class="text-2xl font-bold text-primary-900">Watch Episode</h1>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 gap-8">
+                <!-- Video player -->
+                <div class="bg-white rounded-xl shadow-md p-6 flex justify-center items-center">
                     <video
                         :src="episode_details.episode_video"
-                        class="w-[1000px]"
+                        class="w-full max-w-[1000px] rounded-lg"
                         controls
                         autoplay
                     />
                 </div>
-                <div
-                    class="md:col-span-3 bg-gray-800 rounded-lg p-6 flex flex-col text-white"
-                >
-                    <h2 class="text-xl font-semibold mb-2">
+
+                <!-- Episode information -->
+                <div class="bg-white rounded-xl shadow-md p-6">
+                    <h2 class="text-xl font-bold text-primary-900 mb-3">
                         {{ episode_details.episode_title }}
                     </h2>
-                    <div class="flex items-center mb-2">
+                    <div class="flex items-center mb-4 pb-4 border-b border-primary-100">
                         <img
-                            class="rounded-full w-8 h-8 mr-1.5"
-                            :src="`https://picsum.photos/${
-                                episode_details.course_id + 190
-                            }/300`"
+                            class="rounded-full w-8 h-8 mr-2"
+                            :src="`https://picsum.photos/${episode_details.course_id + 190}/300`"
+                            alt="Instructor"
                         />
-                        <div class="text-[14px] text-gray-300 font-extrabold">
+                        <div class="text-primary-700 font-medium">
                             {{ episode_details.instructor }}
                         </div>
                     </div>
-                    <p
-                        class="text-gray-400 mt-2 flex items-center justify-center text-justify"
-                    >
+                    <p class="text-primary-600 text-justify">
                         {{ episode_details.episode_description }}
                     </p>
                 </div>
-                <div
-                    class="md:col-span-3 bg-gray-800 rounded-lg p-6 flex flex-col text-white"
-                >
-                    <h2 class="text-xl font-semibold mb-4 text-white">
+
+                <!-- All episodes list -->
+                <div class="bg-white rounded-xl shadow-md p-6">
+                    <h2 class="text-xl font-bold text-primary-900 mb-6 pb-2 border-b border-primary-100">
                         All Episodes
                     </h2>
-                    <ul class="space-y-4">
-                        <div
-                            v-for="(other, index) in other_episodes"
-                            :key="other"
-                        >
+                    
+                    <ul class="space-y-6">
+                        <div v-for="(other, index) in other_episodes" :key="other.id">
                             <Link
-                                :href="
-                                    route('course.watchepisode', {
-                                        id: other.id,
-                                    })
-                                "
-                                class="flex items-center justify-center cursor-pointer"
+                                :href="route('course.watchepisode', { id: other.id })"
+                                class="block"
                             >
                                 <li
-                                    class="w-full flex items-center space-x-4 rounded-lg"
-                                    :class="
-                                        page.url == '/watch/' + other.id
-                                            ? 'bg-gray-600  hover:bg-gray-600'
-                                            : 'hover:bg-gray-900'
-                                    "
+                                    class="flex items-start space-x-4 rounded-lg p-3 transition-colors"
+                                    :class="page.url == '/watch/' + other.id ? 'bg-primary-50 border border-primary-100' : 'hover:bg-gray-50'"
                                 >
                                     <div class="flex-shrink-0">
                                         <img
-                                            class="h-40 w-60 rounded-md"
+                                            class="h-32 w-56 rounded-md object-cover"
                                             :src="other.episode_thumbnail"
                                             alt="Video Thumbnail"
                                         />
                                     </div>
                                     <div class="flex-grow">
-                                        <h3
-                                            class="text-lg font-semibold text-white"
-                                        >
+                                        <h3 class="text-lg font-medium text-primary-900 mb-1">
                                             {{ other.episode_title }}
                                         </h3>
-                                        <p class="text-gray-400">
-                                            {{
-                                                trimLongText(
-                                                    other.episode_description,
-                                                    150
-                                                )
-                                            }}
+                                        <p class="text-primary-600 text-sm mb-2">
+                                            {{ trimLongText(other.episode_description, 150) }}
                                         </p>
                                         <div
-                                            class="text-white flex mt-3 items-center"
-                                            v-if="
-                                                page.url == '/watch/' + other.id
-                                            "
+                                            v-if="page.url == '/watch/' + other.id"
+                                            class="text-primary-600 font-medium flex items-center mt-2"
                                         >
-                                            <Play
-                                                fillColor="#FFFFFF"
-                                                :size="25"
-                                            />
-                                            <span class="font-extrabold"
-                                                >NOW PLAYING</span
-                                            >
+                                            <Play fillColor="#4F46E5" :size="20" />
+                                            <span class="ml-1">Now Playing</span>
                                         </div>
                                     </div>
                                 </li>
