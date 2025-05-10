@@ -6,8 +6,6 @@ import InputLabel from "@/Components/InputLabel.vue";
 import PrimaryButton from "@/Components/PrimaryButton.vue";
 import TextInput from "@/Components/TextInput.vue";
 import { Head, Link, useForm } from "@inertiajs/vue3";
-import { computed } from "vue";
-// import { usePage } from "@inertiajs/vue3";
 
 defineProps({
     canResetPassword: {
@@ -29,9 +27,6 @@ const submit = () => {
         onFinish: () => form.reset("password"),
     });
 };
-// const page = usePage();
-
-// console.log(page.props.errors.email);
 </script>
 
 <template>
@@ -42,44 +37,23 @@ const submit = () => {
             {{ status }}
         </div>
 
-        <div class="text-center">
-            <a
-                href="auth/github/redirect"
-                class="inline-block bg-white p-2 rounded-md hover:bg-gray-300 duration-300"
-            >
-                <img
-                    :src="'https://icon-library.com/images/github-icon/github-icon-15.jpg'"
-                    alt="Github Icon"
-                    class="rounded-full w-12 h-12"
-                />
-            </a>
-            <a
-                href="auth/google/redirect"
-                class="inline-block bg-white p-2 rounded-md ml-2 hover:bg-gray-300 duration-300"
-            >
-                <img
-                    :src="'https://icon-library.com/images/free-google-icon/free-google-icon-17.jpg'"
-                    alt="Google Icon"
-                    class="rounded-full w-12 h-12"
-                />
-            </a>
-        </div>
+        <h2 class="text-2xl font-bold text-primary-900 mb-6 text-center">Log in</h2>
 
         <form @submit.prevent="submit">
             <div>
-                <InputLabel for="email" value="Email" class="text-white" />
+                <InputLabel for="email" value="Email" class="text-primary-700" />
 
                 <TextInput
                     id="email"
                     type="email"
-                    class="mt-1 block w-full"
+                    class="mt-1 block w-full input-field"
                     v-model="form.email"
                     required
                     autofocus
                     autocomplete="username"
                 />
 
-                <div v-if="$page.props.errors" class="text-red-600">
+                <div v-if="$page.props.errors" class="text-red-600 text-sm mt-1">
                     {{ $page.props.errors.email }}
                 </div>
             </div>
@@ -88,13 +62,13 @@ const submit = () => {
                 <InputLabel
                     for="password"
                     value="Password"
-                    class="text-white"
+                    class="text-primary-700"
                 />
 
                 <TextInput
                     id="password"
                     type="password"
-                    class="mt-1 block w-full"
+                    class="mt-1 block w-full input-field"
                     v-model="form.password"
                     required
                     autocomplete="current-password"
@@ -106,24 +80,24 @@ const submit = () => {
             <div class="block mt-4">
                 <label class="flex items-center">
                     <Checkbox name="remember" v-model:checked="form.remember" />
-                    <span class="ml-2 text-sm text-white">Remember me</span>
+                    <span class="ml-2 text-sm text-primary-700">Remember me</span>
                 </label>
             </div>
 
-            <div class="flex items-center justify-end mt-4">
+            <div class="flex items-center justify-end mt-6">
                 <Link
                     v-if="canResetPassword"
                     :href="route('password.request')"
-                    class="underline text-sm text-white hover:text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                    class="text-sm text-primary-600 hover:text-primary-800 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500"
                 >
                     Forgot your password?
                 </Link>
 
                 <Link
                     :href="route('register')"
-                    class="underline text-sm text-white ml-4 hover:text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                    class="text-sm text-primary-600 ml-4 hover:text-primary-800 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500"
                 >
-                    Dont have account?
+                    Don't have an account?
                 </Link>
 
                 <PrimaryButton
@@ -137,3 +111,9 @@ const submit = () => {
         </form>
     </GuestLayout>
 </template>
+
+<style>
+.input-field {
+    @apply border-primary-200 focus:border-primary-500 focus:ring focus:ring-primary-200 focus:ring-opacity-50 rounded-md shadow-sm;
+}
+</style>

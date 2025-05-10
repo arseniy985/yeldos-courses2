@@ -4,12 +4,8 @@
     <div class="login-container">
         <div class="login-box">
             <h2>Log In</h2>
-            <div class="social-login">
-                <a href="{{ url('auth/github/redirect') }}"><img src="{{ asset('images/github-icon.png') }}" alt="GitHub"></a>
-                <a href="{{ url('auth/google/redirect') }}"><img src="{{ asset('images/google-icon.png') }}" alt="Google"></a>
-            </div>
             <form method="POST" action="{{ route('login') }}">
-{{--                @csrf--}}
+                @csrf
                 <div class="form-group">
                     <label for="email">Email</label>
                     <input type="email" name="email" id="email" class="form-control" required autofocus>
@@ -42,26 +38,15 @@
         }
 
         .login-box {
-            background: #2b3e50;
-            padding: 20px;
+            background: #ffffff;
+            padding: 25px;
             border-radius: 8px;
             box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
             width: 400px;
             text-align: center;
-            color: white;
-        }
-
-        .social-login {
-            display: flex;
-            justify-content: center;
-            gap: 20px;
-            margin-bottom: 15px;
-        }
-
-        .social-login img {
-            width: 40px;
-            height: 40px;
-            cursor: pointer;
+            color: #333;
+            border: 1px solid #e2e8f0;
+            margin-top: 0;
         }
 
         .form-group {
@@ -73,23 +58,38 @@
             width: 100%;
             padding: 8px;
             border-radius: 5px;
-            border: 1px solid #ccc;
+            border: 1px solid #cbd5e0;
         }
 
         .btn-primary {
             width: 100%;
             padding: 10px;
-            background-color: #007bff;
+            background-color: #4f46e5;
             color: white;
             border: none;
             border-radius: 5px;
             cursor: pointer;
+            margin-top: 10px;
+        }
+
+        .btn-primary:hover {
+            background-color: #4338ca;
         }
 
         a {
             display: block;
             margin-top: 10px;
-            color: #fff;
+            color: #4f46e5;
+            text-decoration: none;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+
+        h2 {
+            color: #1e293b;
+            margin-bottom: 20px;
         }
     </style>
 @endsection

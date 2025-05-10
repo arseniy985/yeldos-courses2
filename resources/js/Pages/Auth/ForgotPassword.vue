@@ -25,10 +25,8 @@ const submit = () => {
     <GuestLayout>
         <Head title="Forgot Password" />
 
-        <div class="mb-4 text-sm text-white">
-            Forgot your password? No problem. Just let us know your email
-            address and we will email you a password reset link that will allow
-            you to choose a new one.
+        <div class="mb-4 text-sm text-gray-600">
+            Forgot your password? No problem. Just let us know your email address and we will email you a password reset link that will allow you to choose a new one.
         </div>
 
         <div v-if="status" class="mb-4 font-medium text-sm text-green-600">
@@ -37,12 +35,12 @@ const submit = () => {
 
         <form @submit.prevent="submit">
             <div>
-                <InputLabel for="email" value="Email" class="text-white" />
+                <InputLabel for="email" value="Email" class="text-primary-700" />
 
                 <TextInput
                     id="email"
                     type="email"
-                    class="mt-1 block w-full"
+                    class="mt-1 block w-full input-field"
                     v-model="form.email"
                     required
                     autofocus
@@ -63,3 +61,9 @@ const submit = () => {
         </form>
     </GuestLayout>
 </template>
+
+<style>
+.input-field {
+    @apply border-primary-200 focus:border-primary-500 focus:ring focus:ring-primary-200 focus:ring-opacity-50 rounded-md shadow-sm;
+}
+</style>

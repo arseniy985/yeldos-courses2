@@ -54,19 +54,19 @@ return [
     */
 
     'mistral' => [
-        'api_key' => env('MISTRAL_API_KEY'),
+        'api_key' => env('MISTRAL_API_KEY') ?? '',
     ],
 
     'qwen' => [
-        'api_key' => env('QWEN_API_KEY'),
+        'api_key' => env('QWEN_API_KEY')?? '',
     ],
 
     'openrouter' => [
-        'api_key' => env('OPENROUTER_API_KEY'),
+        'api_key' => env('OPENROUTER_API_KEY')?? '',
     ],
 
     'ai' => [
-        'default_service' => env('DEFAULT_AI_SERVICE', 'openrouter'),
+        'default_service' => env('DEFAULT_AI_SERVICE', 'openrouter')?? '',
     ],
 
 ];

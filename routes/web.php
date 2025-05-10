@@ -51,7 +51,7 @@ Route::middleware('auth')->group(function () {
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
-    // Маршруты для работы с тестами курсов
+    // Routes for course tests
     Route::get('/course/{courseId}/tests', function($courseId) {
         return Inertia::render('Tests/Index', [
             'course' => Courses::findOrFail($courseId),
@@ -71,14 +71,14 @@ Route::middleware('auth')->group(function () {
         ]);
     })->name('tests.edit');
 
-    // Маршруты для сохранения и обновления тестов
+    // Routes for saving and updating tests
     Route::post('/tests', [CourseTestController::class, 'store'])->name('tests.store');
     Route::put('/tests/{id}', [CourseTestController::class, 'update'])->name('tests.update');
 
-    // Маршрут для удаления теста
+    // Route for deleting a test
     Route::delete('/tests/{id}', [CourseTestController::class, 'destroy'])->name('tests.destroy');
 
-    // Маршруты для студентов для прохождения тестов
+    // Routes for students to take tests
     Route::get('/student/tests', function() {
         return Inertia::render('Tests/StudentTests', [
             'tests' => Test::with(['course', 'questions'])->get()
@@ -99,13 +99,13 @@ Route::middleware('auth')->group(function () {
         ]);
     })->name('student.test-results');
 
-    // Маршрут для просмотра детального результата конкретного теста
+    // Route for viewing detailed test result
     Route::get('/student/test-result/{id}', function($id) {
         $result = App\Models\TestResult::with(['test.questions.answers'])->findOrFail($id);
 
-        // Проверяем, принадлежит ли результат текущему пользователю
+        // Check if the result belongs to the current user
         if ($result->user_id !== Auth::id()) {
-            abort(403, 'Доступ запрещен');
+            abort(403, 'Access denied');
         }
 
         return Inertia::render('Tests/TestResult', [
@@ -113,12 +113,10 @@ Route::middleware('auth')->group(function () {
         ]);
     })->name('student.test.result');
 
-    // Маршрут для отправки ответов теста
+    // Route for submitting test answers
     Route::post('/student/submit-test', [App\Http\Controllers\API\TestController::class, 'submitAnswers'])->name('student.test.submit');
 });
 
-Route::get('auth/{provider}/redirect', [ProviderController::class, 'redirect']);
-Route::get('auth/{provider}/callback', [ProviderController::class, 'callback']);
 Route::get('test/result', [TestController::class, 'getResultAnalytics']);
 
 require __DIR__.'/auth.php';

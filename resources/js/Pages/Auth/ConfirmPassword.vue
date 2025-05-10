@@ -27,11 +27,11 @@ const submit = () => {
 
         <form @submit.prevent="submit">
             <div>
-                <InputLabel for="password" value="Password" />
+                <InputLabel for="password" value="Password" class="text-primary-700" />
                 <TextInput
                     id="password"
                     type="password"
-                    class="mt-1 block w-full"
+                    class="mt-1 block w-full input-field"
                     v-model="form.password"
                     required
                     autocomplete="current-password"
@@ -48,3 +48,9 @@ const submit = () => {
         </form>
     </GuestLayout>
 </template>
+
+<style>
+.input-field {
+    @apply border-primary-200 focus:border-primary-500 focus:ring focus:ring-primary-200 focus:ring-opacity-50 rounded-md shadow-sm;
+}
+</style>
