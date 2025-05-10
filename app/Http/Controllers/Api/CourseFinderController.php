@@ -93,9 +93,9 @@ class CourseFinderController extends Controller
 
         if ($courses->isEmpty()) {
             return response()->json([
-                'success' => false,
+                'success' => true,
                 'message' => 'К сожалению, в системе пока нет доступных курсов'
-            ], 404);
+            ], 200);
         }
 
         // Формируем промпт с запросом пользователя
