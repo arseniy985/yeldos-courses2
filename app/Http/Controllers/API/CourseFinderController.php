@@ -84,7 +84,7 @@ class CourseFinderController extends Controller
         if (empty($userQuery)) {
             return response()->json([
                 'success' => false,
-                'message' => 'Пожалуйста, укажите ваши интересы или цели обучения'
+                'message' => 'Please, enter your prompt'
             ], 400);
         }
 
@@ -94,7 +94,7 @@ class CourseFinderController extends Controller
         if ($courses->isEmpty()) {
             return response()->json([
                 'success' => false,
-                'message' => 'К сожалению, в системе пока нет доступных курсов'
+                'message' => 'Unfortunately, there is no aviable courses'
             ], 404);
         }
 
