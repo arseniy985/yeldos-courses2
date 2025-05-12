@@ -53,6 +53,7 @@ class CourseFinderController extends Controller
       * Рейтинг: точное значение из поля rating
       * Цена: точное значение из поля price
     - Если нет подходящих курсов, сообщи об этом честно
+    - Ответ должен быть на языке, который использует пользователь (приоритет - казахский)
 
     **КРИТИЧЕСКИЙ ЗАПРЕТ:**
     НИКОГДА НЕ ВЫДУМЫВАЙ КУРСЫ, КОТОРЫХ НЕТ В ПРЕДОСТАВЛЕННОМ JSON.
@@ -94,7 +95,7 @@ class CourseFinderController extends Controller
         if ($courses->isEmpty()) {
             return response()->json([
                 'success' => true,
-                'message' => 'К сожалению, в системе пока нет доступных курсов'
+                'message' => 'There is no aviable courses'
             ], 200);
         }
 
