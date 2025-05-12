@@ -53,6 +53,7 @@ class CourseFinderController extends Controller
       * Рейтинг: точное значение из поля rating
       * Цена: точное значение из поля price
     - Если нет подходящих курсов, сообщи об этом честно
+    - Ответ должен быть на языке, который использует пользователь (приоритет - казахский)
 
     **КРИТИЧЕСКИЙ ЗАПРЕТ:**
     НИКОГДА НЕ ВЫДУМЫВАЙ КУРСЫ, КОТОРЫХ НЕТ В ПРЕДОСТАВЛЕННОМ JSON.
@@ -84,7 +85,7 @@ class CourseFinderController extends Controller
         if (empty($userQuery)) {
             return response()->json([
                 'success' => false,
-                'message' => 'Please, enter your prompt'
+                'message' => 'Пожалуйста, укажите ваши интересы или цели обучения'
             ], 400);
         }
 
@@ -93,9 +94,9 @@ class CourseFinderController extends Controller
 
         if ($courses->isEmpty()) {
             return response()->json([
-                'success' => false,
-                'message' => 'Unfortunately, there is no aviable courses'
-            ], 404);
+                'success' => true,
+                'message' => 'There is no aviable courses'
+            ], 200);
         }
 
         // Формируем промпт с запросом пользователя
