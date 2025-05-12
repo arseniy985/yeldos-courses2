@@ -6,6 +6,7 @@ use App\Models\Courses;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class CoursesController extends Controller
 {
@@ -120,34 +121,41 @@ class CoursesController extends Controller
 
     public function destroy($id)
     {
-        $course = Courses::find($id);
+        try {
+            $course = Courses::findOrFail($id);
 
-        $course_id = $course->id;
+            $course_id = $course->id;
 
-        $course_episodes = DB::table('course_episodes')->where('course_id', $course_id)->get(); // Course Episodes
-        // delete all episodes
-        if ($course_episodes) {
-            foreach ($course_episodes as $episode) {
-                // delete the episode thumbnail
-                if (file_exists(public_path() . $episode->episode_thumbnail)) {
-                    unlink(public_path() . $episode->episode_thumbnail);
+            $course_episodes = DB::table('course_episodes')->where('course_id', $course_id)->get(); // Course Episodes
+            // delete all episodes
+            if ($course_episodes) {
+                foreach ($course_episodes as $episode) {
+                    // delete the episode thumbnail
+                    if (!empty($episode->episode_thumbnail) && file_exists(public_path() . $episode->episode_thumbnail)) {
+                        @unlink(public_path() . $episode->episode_thumbnail);
+                    }
+                    // delete the episode video
+                    if (!empty($episode->episode_video) && file_exists(public_path() . $episode->episode_video)) {
+                        @unlink(public_path() . $episode->episode_video);
+                    }
+
+                    // delete the database record
+                    DB::table('course_episodes')->where('id', $episode->id)->delete();
                 }
-                // delete the episode video
-                if (file_exists(public_path() . $episode->episode_video)) {
-                    unlink(public_path() . $episode->episode_video);
-                }
-
-                // delete the database record
-                DB::table('course_episodes')->where('id', $episode->id)->delete();
             }
-        }
 
-        // course thumbnail delete
-        if (file_exists(public_path() . $course->thumbnail)) {
-            unlink(public_path() . $course->thumbnail);
-        }
+            // course thumbnail delete
+            if (!empty($course->thumbnail) && file_exists(public_path() . $course->thumbnail)) {
+                @unlink(public_path() . $course->thumbnail);
+            }
 
-        $course->delete(); // delete the course in the actual database
-        return redirect()->route('manageCourses');
+            $course->delete(); // delete the course in the actual database
+            return redirect()->route('manageCourses')->with('success', 'Курс сәтті жойылды');
+        } catch (\Exception $e) {
+            // Log error
+            Log::error('Курсты жою кезінде қате: ' . $e->getMessage());
+            
+            return redirect()->route('manageCourses')->with('error', 'Курсты жою кезінде қате орын алды');
+        }
     }
 }
