@@ -19,10 +19,10 @@ const chatContainer = ref(null); // Reference to chat container for scrolling
 
 // Preset questions for quick selection
 const suggestedQuestions = [
-  'I want to learn programming, what do you recommend?',
-  'What courses on design do you have?',
-  'Recommend courses for beginners',
-  'What are the most popular courses?'
+  'Мен программалауды үйренгім келеді, не ұсынасыз?',
+  'Дизайн бойынша қандай курстарыңыз бар?',
+  'Бастаушыларға арналған курстарды ұсыныңыз',
+  'Ең танымал курстар қандай?'
 ];
 
 // Initialize chatbot
@@ -30,7 +30,7 @@ onMounted(() => {
   // Add welcome message on load
   messages.value.push({
     id: Date.now(),
-    text: 'Hi! I\'m your course selection assistant. Tell me what you\'re interested in, and I\'ll help you find suitable courses. Feel free to ask about a specific topic or skill level.',
+    text: 'Сәлеметсіз бе! Мен сіздің курс таңдау көмекшіңізмін. Қызығушылықтарыңызды айтыңыз, мен сізге лайықты курстарды табуға көмектесемін. Арнайы тақырып немесе білім деңгейі туралы сұрақ қоюыңызға болады.',
     isUser: false,
     timestamp: new Date()
   });
@@ -80,11 +80,11 @@ const sendMessage = async () => {
     console.error('Error querying API:', error);
     
     // Add error message
-    let errorMessage = 'Sorry, there was an error processing your request. Please try again or ask a different question.';
+    let errorMessage = 'Кешіріңіз, сұранысыңызды өңдеу кезінде қате кетті. Басқа сұрақ қойып көріңіз.';
     
     // Check if error is a timeout
     if (error.code === 'ECONNABORTED') {
-      errorMessage = 'The server response timed out. Queries to the neural network may take some time. Please try a shorter or simpler question.';
+      errorMessage = 'Сервер жауабының уақыты асып кетті. Нейрондық желіге сұраулар біраз уақыт алуы мүмкін. Қысқа немесе қарапайым сұрақ қойып көріңіз.';
     }
     
     messages.value.push({
@@ -139,7 +139,7 @@ const renderMarkdown = (text) => {
         <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
         </svg>
-        <span>Course Assistant</span>
+        <span>Курс көмекшісі</span>
       </div>
       <div v-else>
         <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -159,8 +159,8 @@ const renderMarkdown = (text) => {
             </svg>
           </div>
           <div>
-            <h3 class="chatbot-title">Course Assistant</h3>
-            <p class="chatbot-subtitle">I'll help find the right course</p>
+            <h3 class="chatbot-title">Курс көмекшісі</h3>
+            <p class="chatbot-subtitle">Дұрыс курсты табуға көмектесемін</p>
           </div>
         </div>
         <button @click="toggleChat" class="chatbot-close">
@@ -213,7 +213,7 @@ const renderMarkdown = (text) => {
           <input 
             v-model="userInput" 
             type="text" 
-            placeholder="Type your question..." 
+            placeholder="Сұрағыңызды жазыңыз..." 
             class="chatbot-input"
             :disabled="isLoading"
           />
